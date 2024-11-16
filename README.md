@@ -1,0 +1,1 @@
+## WebParty - A web application made for parties
