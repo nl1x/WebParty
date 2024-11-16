@@ -1,0 +1,27 @@
+{
+  "name": "webparty-back",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "tests": "echo 'No test found...' && exit 1",
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon",
+    "build": "tsc",
+    "serve": "node dist/index.js"
+  },
+  "author": "nL1x",
+  "license": "ISC",
+  "description": "An api for the WebParty project",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.9.0",
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "mysql2": "^3.11.4",
+    "sequelize": "^6.37.5"
+  }
+}
