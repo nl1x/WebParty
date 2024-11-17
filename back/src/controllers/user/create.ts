@@ -88,6 +88,7 @@ export default async function createUser(req: Request, res: Response)
     if (!isUsernameValid(username, res) || (avatar && !isAvatarValid(avatar, res)))
         return;
 
+    // TODO: Test this feature
     let hashedPassword: string;
     try {
         hashedPassword = await hashPassword(password);
