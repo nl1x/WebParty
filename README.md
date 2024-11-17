@@ -3,7 +3,9 @@
 
 ---
 
-## 🛠️ Backend Structure  
+<details>
+
+<summary> 🛠️ <strong>Backend Structure </strong></summary>  
 
 The backend is organized into four main directories:
 
@@ -33,3 +35,4 @@ Examples:
 This directory contains the logic and functionality for each route.  
 Examples:  
 - ✏️ To create a user, the file `controllers/users/post.ts` would include a `postUser(...)` function to validate the incoming data and create the user.  
+</details>
