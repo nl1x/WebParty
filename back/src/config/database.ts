@@ -1,4 +1,7 @@
+import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
+
+dotenv.config();
 
 const HOST = process.env.DATABASE_HOST || "";
 const USER = process.env.DATABASE_USER || "";
@@ -9,7 +12,6 @@ const database = new Sequelize(DATABASE, USER, PASSWORD, {
     host: HOST,
     dialect: 'mysql'
 });
-
 
 // Login to the database
 database.authenticate()

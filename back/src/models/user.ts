@@ -1,5 +1,6 @@
-import {DataTypes, Model} from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import database from "@config/database";
+import { VAR_LENGTH } from "@config/variables";
 
 class User extends Model {
     declare id: number;
@@ -16,7 +17,7 @@ User.init(
             primaryKey: true,
         },
         username: {
-            type: DataTypes.STRING(16),
+            type: DataTypes.STRING(VAR_LENGTH.USERNAME),
             unique: true
         },
         password: {
