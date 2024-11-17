@@ -6,7 +6,7 @@
       "@models/*": ["src/models/*"],
       "@routes/*": ["src/routes/*"],
       "@services/*": ["src/services/*"],
-      "@controller/*": ["src/controllers/*"]
+      "@controllers/*": ["src/controllers/*"]
     },
     "target": "es6",
     "module": "commonjs",

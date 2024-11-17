@@ -3,5 +3,5 @@
   "ext": "ts",
   "ignore": ["dist"],
   "delay": 1000,
-  "exec": "ts-node ./src/index.ts"
+  "exec": "tsc && ts-node ./src/index.ts"
 }
