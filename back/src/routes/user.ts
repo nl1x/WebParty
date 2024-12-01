@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import createUser from "@controllers/user/create";
-import {file} from "../middlewares/uploadPicture";
+import updateUser from "@controllers/user/update";
+import { getUsers } from "@controllers/user/fetch";
+import { file } from "@middlewares/upload-picture";
+import checkAuthentication from "@middlewares/check-authentication";
 
 const userRouter = Router();
 
-userRouter.post('/', file('avatar', 'uploads/avatars/'), createUser);
-userRouter.get('/', (req, res) => {
-    res.json({ message: 'test' });
-});
+userRouter.get('/', getUsers);
+userRouter.patch('/', checkAuthentication, file('avatar', 'uploads/avatars/'), updateUser);
 
 export default userRouter;

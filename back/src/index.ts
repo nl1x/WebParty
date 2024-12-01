@@ -2,6 +2,8 @@ import 'module-alias/register';
 import dotenv from "dotenv";
 import express, { Request, Response } from 'express';
 import userRouter from "@routes/user";
+import publicRouter from "@routes/public";
+import authRouter from "@routes/auth";
 
 // Load the environment variables
 dotenv.config();
@@ -16,7 +18,9 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Hello, TypeScript Express!');
 });
 
+app.use('/auth', authRouter);
 app.use('/users', userRouter);
+app.use('/', publicRouter);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
