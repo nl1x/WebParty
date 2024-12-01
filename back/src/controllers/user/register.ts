@@ -1,40 +1,14 @@
 import { Request, Response } from 'express';
 import {
-    AUTHORIZED_FILE_TYPES,
     CODE_STATUS,
     VAR_LENGTH,
-    REGEX, DEFAULT
+    REGEX, DEFAULT,
 } from "@config/variables";
 import User from "@models/user";
-import fs from 'fs';
-import path from 'path';
-import bcrypt from 'bcryptjs';
-
-function manageAvatarFile(user: User, avatarPath: string)
-{
-    const previousPath = avatarPath;
-    const directory = path.dirname(previousPath);
-    const extension = path.extname(previousPath);
-    const avatarFileName = `${user.id}_avatar${extension}`;
-    const newPath = path.join(directory, avatarFileName);
-
-    user.avatarUrl = newPath;
-    fs.renameSync(previousPath, newPath);
-
-    return newPath;
-}
-
-function isAvatarValid(avatar: Express.Multer.File, res: Response): boolean
-{
-    if (!AUTHORIZED_FILE_TYPES.IMAGES.includes(avatar.mimetype)) {
-        res.status(CODE_STATUS.BAD_REQUEST).json({
-            "message": "Incorrect avatar file type."
-        });
-        return false;
-    }
-
-    return true;
-}
+import {Error} from "sequelize";
+import hashPassword from "@utils/hash";
+import handleSequelizeErrors from "@errors/sequelize";
+import { isAvatarValid, manageAvatarFile, deleteAvatar } from "@utils/avatar";
 
 function isUsernameValid(username: string, res: Response) : boolean
 {
@@ -57,20 +31,7 @@ function isUsernameValid(username: string, res: Response) : boolean
     return true;
 }
 
-function hashPassword(password: string) : Promise<string>
-{
-    return new Promise(async (resolve, reject) => {
-        try {
-            const hashedPassword = await bcrypt.hash(password, DEFAULT.BCRYPT_SALT);
-            resolve(hashedPassword);
-        } catch (error) {
-            console.error('Error hashing password:', error);
-            reject(error);
-        }
-    });
-}
-
-export default async function createUser(req: Request, res: Response)
+export default async function registerUser(req: Request, res: Response)
 {
     const username = req.body['username'];
     const password = req.body['password'];
@@ -78,6 +39,7 @@ export default async function createUser(req: Request, res: Response)
 
     // Checks if all the required parameters exists
     if (!username || !password) {
+        deleteAvatar(avatar);
         res.status(CODE_STATUS.BAD_REQUEST).json({
             "message": "Missing parameters..."
         });
@@ -85,10 +47,11 @@ export default async function createUser(req: Request, res: Response)
     }
 
     // Check if the username is valid (length, alphanumeric characters only, ...)
-    if (!isUsernameValid(username, res) || (avatar && !isAvatarValid(avatar, res)))
+    if (!isUsernameValid(username, res) || (avatar && !isAvatarValid(avatar, res))) {
+        deleteAvatar(avatar);
         return;
+    }
 
-    // TODO: Test this feature
     let hashedPassword: string;
     try {
         hashedPassword = await hashPassword(password);
@@ -97,6 +60,7 @@ export default async function createUser(req: Request, res: Response)
             "message": "An internal error occurred..."
         });
         console.error("An error occurred while hashing the user password: ", error);
+        deleteAvatar(avatar);
         return;
     }
 
@@ -108,16 +72,27 @@ export default async function createUser(req: Request, res: Response)
             password: hashedPassword
         });
     } catch (error) {
-        res.status(CODE_STATUS.INTERNAL).json({
-            "message": "An internal error occurred..."
+
+        // Delete temporary avatar file
+        deleteAvatar(avatar);
+
+        if (!(error instanceof Error)) {
+            res.status(CODE_STATUS.INTERNAL).json({
+                "message": "An internal error occurred..."
+            });
+            console.error("An error occurred while creating the user: ", error);
+            return;
+        }
+
+        handleSequelizeErrors(res, error, {
+            uniqueConstraint: "Username already taken."
         });
-        console.error("An error occurred while creating a user: ", error);
         return;
     }
 
     // Set the avatar correct path
     const avatarPath = avatar
-        ? manageAvatarFile(user, avatar.path)
+        ? await manageAvatarFile(user, avatar.path)
         : DEFAULT.AVATAR_PLACEHOLDER;
 
     user.save()
@@ -134,6 +109,7 @@ export default async function createUser(req: Request, res: Response)
                 });
                 console.error("An error occurred while saving a user profile picture: ", error);
                 user.destroy();
+                deleteAvatar(avatar);
             }
         )
 }
