@@ -15,10 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = registerUser;
 const variables_1 = require("@config/variables");
 const user_1 = __importDefault(require("@models/user"));
-const sequelize_1 = require("sequelize");
 const hash_1 = __importDefault(require("@utils/hash"));
-const sequelize_2 = __importDefault(require("@errors/sequelize"));
+const sequelize_1 = __importDefault(require("@errors/sequelize"));
 const avatar_1 = require("@utils/avatar");
+const token_1 = __importDefault(require("@utils/token"));
 function isUsernameValid(username, res) {
     // Checks the length of the username
     if (username.length > variables_1.VAR_LENGTH.USERNAME) {
@@ -77,37 +77,28 @@ function registerUser(req, res) {
         catch (error) {
             // Delete temporary avatar file
             (0, avatar_1.deleteAvatar)(avatar);
-            if (!(error instanceof sequelize_1.Error)) {
-                res.status(variables_1.CODE_STATUS.INTERNAL).json({
-                    "message": "An internal error occurred..."
-                });
-                console.error("An error occurred while creating the user: ", error);
-                return;
-            }
-            (0, sequelize_2.default)(res, error, {
+            return (0, sequelize_1.default)(res, error, {
                 uniqueConstraint: "Username already taken."
             });
-            return;
         }
         // Set the avatar correct path
-        const avatarPath = avatar
-            ? yield (0, avatar_1.manageAvatarFile)(user, avatar.path)
-            : variables_1.DEFAULT.AVATAR_PLACEHOLDER;
-        user.save()
-            .then((user) => {
-            res.status(variables_1.CODE_STATUS.SUCCESS).json({
-                "message": "User created.",
-                "user": user,
-                "avatar_path": avatarPath
-            });
-        })
-            .catch((error) => {
-            res.status(variables_1.CODE_STATUS.INTERNAL).json({
-                "message": "An internal error occurred..."
-            });
-            console.error("An error occurred while saving a user profile picture: ", error);
-            user.destroy();
+        if (avatar)
+            yield (0, avatar_1.saveAvatarFile)(user, avatar.path);
+        try {
+            user = yield user.save();
+        }
+        catch (error) {
+            yield user.destroy();
             (0, avatar_1.deleteAvatar)(avatar);
+            return (0, sequelize_1.default)(res, error);
+        }
+        const token = yield (0, token_1.default)(user);
+        res.status(variables_1.CODE_STATUS.SUCCESS)
+            .cookie('session', token, {
+            httpOnly: true,
+            sameSite: 'strict'
+        }).json({
+            "message": "Successfully registered.",
         });
     });
 }
