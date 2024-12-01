@@ -5,10 +5,10 @@ import {
     REGEX, DEFAULT,
 } from "@config/variables";
 import User from "@models/user";
-import {Error} from "sequelize";
 import hashPassword from "@utils/hash";
-import handleSequelizeErrors from "@errors/sequelize";
-import { isAvatarValid, manageAvatarFile, deleteAvatar } from "@utils/avatar";
+import handleRequestError from "@errors/sequelize";
+import { isAvatarValid, saveAvatarFile, deleteAvatar } from "@utils/avatar";
+import generateToken from "@utils/token";
 
 function isUsernameValid(username: string, res: Response) : boolean
 {
@@ -72,44 +72,32 @@ export default async function registerUser(req: Request, res: Response)
             password: hashedPassword
         });
     } catch (error) {
-
         // Delete temporary avatar file
         deleteAvatar(avatar);
-
-        if (!(error instanceof Error)) {
-            res.status(CODE_STATUS.INTERNAL).json({
-                "message": "An internal error occurred..."
-            });
-            console.error("An error occurred while creating the user: ", error);
-            return;
-        }
-
-        handleSequelizeErrors(res, error, {
+        return handleRequestError(res, error, {
             uniqueConstraint: "Username already taken."
         });
-        return;
     }
 
     // Set the avatar correct path
-    const avatarPath = avatar
-        ? await manageAvatarFile(user, avatar.path)
-        : DEFAULT.AVATAR_PLACEHOLDER;
+    if (avatar)
+        await saveAvatarFile(user, avatar.path);
 
-    user.save()
-        .then((user) => {
-            res.status(CODE_STATUS.SUCCESS).json({
-                "message": "User created.",
-                "user": user,
-                "avatar_path": avatarPath
-            });
-        })
-        .catch((error) => {
-                res.status(CODE_STATUS.INTERNAL).json({
-                    "message": "An internal error occurred..."
-                });
-                console.error("An error occurred while saving a user profile picture: ", error);
-                user.destroy();
-                deleteAvatar(avatar);
-            }
-        )
+    try {
+        user = await user.save();
+    } catch (error) {
+        await user.destroy();
+        deleteAvatar(avatar);
+        return handleRequestError(res, error);
+    }
+
+    const token = await generateToken(user);
+
+    res.status(CODE_STATUS.SUCCESS)
+        .cookie('session', token, {
+            httpOnly: true,
+            sameSite: 'strict'
+        }).json({
+            "message": "Successfully registered.",
+        });
 }
