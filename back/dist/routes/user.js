@@ -10,5 +10,6 @@ const upload_picture_1 = require("@middlewares/upload-picture");
 const check_authentication_1 = __importDefault(require("@middlewares/check-authentication"));
 const userRouter = (0, express_1.Router)();
 userRouter.get('/', fetch_1.getUsers);
+userRouter.get('/:id', fetch_1.getUser);
 userRouter.patch('/', check_authentication_1.default, (0, upload_picture_1.file)('avatar', 'uploads/avatars/'), update_1.default);
 exports.default = userRouter;

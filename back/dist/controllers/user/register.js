@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -19,22 +42,17 @@ const hash_1 = __importDefault(require("@utils/hash"));
 const sequelize_1 = __importDefault(require("@errors/sequelize"));
 const avatar_1 = require("@utils/avatar");
 const token_1 = __importDefault(require("@utils/token"));
-function isUsernameValid(username, res) {
+const custom_error_1 = __importStar(require("@errors/custom-error"));
+function checkUsername(username) {
     // Checks the length of the username
     if (username.length > variables_1.VAR_LENGTH.USERNAME) {
-        res.status(variables_1.CODE_STATUS.BAD_REQUEST).json({
-            "message": `The username must not exceed ${variables_1.VAR_LENGTH.USERNAME} characters.`
-        });
-        return false;
+        return new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.USERNAME_TOO_MUCH_CHARACTERS, `The username must not exceed ${variables_1.VAR_LENGTH.USERNAME} characters.`);
     }
     // Check if the username is alphanumeric
     if (!variables_1.REGEX.USERNAME_RULES.test(username)) {
-        res.status(variables_1.CODE_STATUS.BAD_REQUEST).json({
-            "message": "The only accepted characters for the username are alphanumeric characters, '-' and '_'."
-        });
-        return false;
+        return new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.USERNAME_INCORRECT_CHARACTERS, "The only accepted characters for the username are alphanumeric characters, '-' and '_'.");
     }
-    return true;
+    return null;
 }
 function registerUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -49,11 +67,18 @@ function registerUser(req, res) {
             });
             return;
         }
-        // Check if the username is valid (length, alphanumeric characters only, ...)
-        if (!isUsernameValid(username, res) || (avatar && !(0, avatar_1.isAvatarValid)(avatar, res))) {
-            (0, avatar_1.deleteAvatar)(avatar);
-            return;
+        // Check if the avatar is an image
+        if (avatar) {
+            const avatarError = (0, avatar_1.checkAvatar)(avatar);
+            if (avatarError instanceof custom_error_1.default) {
+                (0, avatar_1.deleteAvatar)(avatar);
+                return (0, sequelize_1.default)(res, avatarError);
+            }
         }
+        // Check if the username is valid (length, alphanumeric characters only, ...)
+        const usernameError = checkUsername(username);
+        if (username instanceof custom_error_1.default)
+            return (0, sequelize_1.default)(res, usernameError);
         let hashedPassword;
         try {
             hashedPassword = yield (0, hash_1.default)(password);
@@ -98,7 +123,7 @@ function registerUser(req, res) {
             httpOnly: true,
             sameSite: 'strict'
         }).json({
-            "message": "Successfully registered.",
+            "message": "Your account has been successfully registered.",
         });
     });
 }

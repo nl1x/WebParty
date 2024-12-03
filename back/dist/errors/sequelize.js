@@ -23,7 +23,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleSequelizeErrors = handleSequelizeErrors;
 exports.default = handleRequestError;
 const sequelize_1 = require("sequelize");
 const variables_1 = require("@config/variables");
@@ -68,6 +67,16 @@ function handleCustomError(res, error, errorMessage) {
                 "message": "You are not authorized to perform this action."
             });
             console.error(error.message);
+            break;
+        case custom_error_1.CUSTOM_ERROR_TYPE.INCORRECT_PARAMETER:
+        case custom_error_1.CUSTOM_ERROR_TYPE.MISSING_PARAMETER:
+        case custom_error_1.CUSTOM_ERROR_TYPE.AVATAR_INCORRECT_FILE_TYPE:
+        case custom_error_1.CUSTOM_ERROR_TYPE.USERNAME_TOO_MUCH_CHARACTERS:
+        case custom_error_1.CUSTOM_ERROR_TYPE.USERNAME_INCORRECT_CHARACTERS:
+        case custom_error_1.CUSTOM_ERROR_TYPE.USER_NOT_FOUND:
+            res.status(variables_1.CODE_STATUS.BAD_REQUEST).json({
+                "message": error.message
+            });
             break;
     }
 }
