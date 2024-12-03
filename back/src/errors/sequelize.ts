@@ -3,7 +3,7 @@ import {Response} from 'express';
 import {CODE_STATUS, SEQUELIZE_ERRORS} from "@config/variables";
 import CustomError, {CUSTOM_ERROR_TYPE} from "@errors/custom-error";
 
-export function handleSequelizeErrors(res: Response, error: Error, errorMessages?: ErrorMessagesProps)
+function handleSequelizeErrors(res: Response, error: Error, errorMessages?: ErrorMessagesProps)
 {
     switch (error.name) {
         case SEQUELIZE_ERRORS.UNIQUE_CONSTRAINT:
@@ -46,11 +46,20 @@ function handleCustomError(res: Response, error: CustomError, errorMessage?: Err
             });
             console.error(error.message);
             break;
-
+        case CUSTOM_ERROR_TYPE.INCORRECT_PARAMETER:
+        case CUSTOM_ERROR_TYPE.MISSING_PARAMETER:
+        case CUSTOM_ERROR_TYPE.AVATAR_INCORRECT_FILE_TYPE:
+        case CUSTOM_ERROR_TYPE.USERNAME_TOO_MUCH_CHARACTERS:
+        case CUSTOM_ERROR_TYPE.USERNAME_INCORRECT_CHARACTERS:
+        case CUSTOM_ERROR_TYPE.USER_NOT_FOUND:
+            res.status(CODE_STATUS.BAD_REQUEST).json({
+                "message": error.message
+            });
+            break;
     }
 }
 
-export default function handleRequestError(res: Response, error: Error|any, errorMessages?: ErrorMessagesProps) : void
+export default function handleRequestError(res: Response, error: Error|CustomError|any, errorMessages?: ErrorMessagesProps) : void
 {
     if (error instanceof Error)
         return handleSequelizeErrors(res, error, errorMessages);
