@@ -4,9 +4,15 @@ import express, { Request, Response } from 'express';
 import userRouter from "@routes/user";
 import publicRouter from "@routes/public";
 import authRouter from "@routes/auth";
+import {initializeDatabase} from "@config/database";
+import actionRouter from "@routes/action";
 
 // Load the environment variables
 dotenv.config();
+
+initializeDatabase().then(() => {
+    console.log("Database ready to use !");
+});
 
 const app = express();
 const port = process.env.API_PORT || 3000;
@@ -20,6 +26,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
+app.use('/actions', actionRouter);
 app.use('/', publicRouter);
 
 app.listen(port, () => {
