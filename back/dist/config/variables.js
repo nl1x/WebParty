@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SEQUELIZE_ERRORS = exports.DEFAULT = exports.REGEX = exports.VAR_LENGTH = exports.AUTHORIZED_FILE_TYPES = exports.CODE_STATUS = void 0;
+exports.ACTION_STATUS = exports.ROLE = exports.SEQUELIZE_ERRORS = exports.DEFAULT = exports.REGEX = exports.VAR_LENGTH = exports.AUTHORIZED_FILE_TYPES = exports.CODE_STATUS = void 0;
 var CODE_STATUS;
 (function (CODE_STATUS) {
     CODE_STATUS[CODE_STATUS["SUCCESS"] = 200] = "SUCCESS";
@@ -19,7 +19,13 @@ const AUTHORIZED_FILE_TYPES = {
 };
 exports.AUTHORIZED_FILE_TYPES = AUTHORIZED_FILE_TYPES;
 const VAR_LENGTH = {
-    USERNAME: parseInt(process.env.USERNAME_MAX_LENGTH || '16')
+    USERNAME: parseInt(process.env.USERNAME_MAX_LENGTH || '16'),
+    DISPLAY_NAME: parseInt(process.env.DISPLAY_NAME_MAX_LENGTH || '16'),
+    ROLE_NAME: parseInt(process.env.ROLE_NAME_MAX_LENGTH || '16'),
+    ACTION: parseInt(process.env.ACTION_MAX_LENGTH || '128'),
+    PICTURE: parseInt(process.env.PICTURE_MAX_LENGTH || '64'),
+    ACTION_STATUS: 16,
+    PASSWORD: 128
 };
 exports.VAR_LENGTH = VAR_LENGTH;
 const REGEX = {
@@ -39,3 +45,16 @@ var SEQUELIZE_ERRORS;
     SEQUELIZE_ERRORS["DATABASE"] = "SequelizeDatabaseError";
     SEQUELIZE_ERRORS["CONNECTION_REFUSED"] = "SequelizeConnectionRefusedError";
 })(SEQUELIZE_ERRORS || (exports.SEQUELIZE_ERRORS = SEQUELIZE_ERRORS = {}));
+var ROLE;
+(function (ROLE) {
+    ROLE[ROLE["ADMIN"] = 0] = "ADMIN";
+    ROLE[ROLE["ORGANISER"] = 1] = "ORGANISER";
+    ROLE[ROLE["USER"] = 2] = "USER";
+})(ROLE || (exports.ROLE = ROLE = {}));
+var ACTION_STATUS;
+(function (ACTION_STATUS) {
+    ACTION_STATUS["WAITING"] = "waiting";
+    ACTION_STATUS["PENDING_APPROVAL"] = "pending-approval";
+    ACTION_STATUS["NOT_DONE"] = "not-done";
+    ACTION_STATUS["DONE"] = "done";
+})(ACTION_STATUS || (exports.ACTION_STATUS = ACTION_STATUS = {}));

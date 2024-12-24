@@ -35,32 +35,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = checkAuthentication;
-const variables_1 = require("@config/variables");
-const token_1 = require("@utils/token");
-const user_1 = __importDefault(require("@models/user"));
+exports.hasRole = hasRole;
+const roles_1 = __importDefault(require("@config/roles"));
 const sequelize_1 = __importDefault(require("@errors/sequelize"));
 const custom_error_1 = __importStar(require("@errors/custom-error"));
-function checkAuthentication(req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const authToken = req.headers.authorization;
-        const decodedToken = authToken ? (0, token_1.decodeToken)(authToken) : null;
-        if (decodedToken === null) {
-            res.status(variables_1.CODE_STATUS.UNAUTHORIZED).json({
-                "message": "You are not authorized to perform this action."
-            });
-            return;
-        }
-        const user = yield user_1.default.findByPk(decodedToken.id, {
-            attributes: {
-                exclude: ['password']
+function hasRole(role) {
+    const requiredRole = roles_1.default[role];
+    return function (req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const authReq = req;
+            if (authReq.user.roleName !== requiredRole.name) {
+                return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.PERMISSION_DENIED));
             }
+            next();
         });
-        if (user === null) {
-            return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.USER_NOT_FOUND_BUT_AUTHENTICATED, `The user with ID '${decodedToken.id}' cannot be found when checking the user authentication token.`));
-        }
-        req.id = decodedToken.id;
-        req.user = user;
-        next();
-    });
+    };
 }

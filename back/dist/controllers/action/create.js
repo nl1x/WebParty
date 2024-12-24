@@ -35,55 +35,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUsers = getUsers;
-exports.getUser = getUser;
-const user_1 = __importDefault(require("@models/user"));
-const variables_1 = require("@config/variables");
+exports.default = createAction;
 const sequelize_1 = __importDefault(require("@errors/sequelize"));
 const custom_error_1 = __importStar(require("@errors/custom-error"));
-const role_1 = __importDefault(require("@models/role"));
-const user_action_1 = __importDefault(require("@models/user-action"));
-// ===============================
-//   TODO : Review this function
-// ===============================
-function getUsers(req, res) {
+const action_1 = __importDefault(require("@models/action"));
+const variables_1 = require("@config/variables");
+function createAction(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        user_1.default.findAll({
-            attributes: { exclude: ['password'] },
-            include: [
-                { model: role_1.default, as: 'role' },
-                { model: user_action_1.default, as: 'actions' }
-            ]
-        })
-            .then((users) => {
-            res.status(variables_1.CODE_STATUS.SUCCESS).json({
-                "users": users
+        const { difficulty, requireProof, description } = req.body;
+        const parsedDifficulty = parseInt(difficulty, 10);
+        if (parsedDifficulty < 1 || parsedDifficulty > 3) {
+            return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.BAD_PARAMETER, "The difficulty should be between 1 and 3."));
+        }
+        if (!description) {
+            return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.BAD_PARAMETER, "The description is missing."));
+        }
+        let action = null;
+        try {
+            action = yield action_1.default.create({
+                description,
+                difficulty: parsedDifficulty,
+                requireProof: requireProof
             });
-        })
-            .catch((error) => {
-            (0, sequelize_1.default)(res, error);
-        });
-    });
-}
-function getUser(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { id: userId } = req.params;
-        if (!userId)
-            return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.BAD_PARAMETER, "The parameter 'id' is missing."));
-        // Check if the userId is a positive integer
-        if (!(/^\d+$/.test(userId)))
-            return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.BAD_PARAMETER, "The parameter 'id' should be a positive integer."));
-        const user = yield user_1.default.findByPk(parseInt(userId), {
-            attributes: {
-                exclude: ['password']
-            },
-            include: [{ model: role_1.default, as: 'role' }, { model: user_action_1.default, as: 'actions' }]
-        });
-        if (user === null) {
-            return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.USER_NOT_FOUND, "The requested user cannot be found."));
+        }
+        catch (error) {
+            return (0, sequelize_1.default)(res, error);
         }
         res.status(variables_1.CODE_STATUS.SUCCESS).json({
-            "user": user
+            message: "The action has been successfully created.",
+            actionId: action.id
         });
     });
 }

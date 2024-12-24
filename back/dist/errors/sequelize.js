@@ -44,36 +44,51 @@ function handleSequelizeErrors(res, error, errorMessages) {
             res.status(variables_1.CODE_STATUS.INTERNAL).json({
                 "message": "An internal error occurred..."
             });
-            console.error("Database error occurred while creating the user: ", error);
+            console.error("DATABASE error occurred: ", error);
             break;
         case variables_1.SEQUELIZE_ERRORS.CONNECTION_REFUSED:
             res.status(variables_1.CODE_STATUS.INTERNAL).json({
                 "message": "An internal error occurred..."
             });
+            console.error("DB_CONNECTION error occurred: ", error.name, "\nFull error can be found here:\n", error);
             break;
         default:
             res.status(variables_1.CODE_STATUS.INTERNAL).json({
                 "message": "An internal error occurred..."
             });
-            console.error("Unknown error occurred while creating the user: ", error.name, "\nFull error can be found here:\n", error);
+            console.error("UNKNOWN error occurred: ", error.name, "\nFull error can be found here:\n", error);
             break;
     }
     return;
 }
 function handleCustomError(res, error, errorMessage) {
     switch (error.type) {
+        // --- Specific case ---
+        // Token valid but user not in database
+        case custom_error_1.CUSTOM_ERROR_TYPE.PERMISSION_DENIED:
+            res.status(variables_1.CODE_STATUS.UNAUTHORIZED).json({
+                "message": "You are not allowed to do this."
+            });
+            break;
         case custom_error_1.CUSTOM_ERROR_TYPE.USER_NOT_FOUND_BUT_AUTHENTICATED:
             res.status(variables_1.CODE_STATUS.UNAUTHORIZED).json({
-                "message": "You are not authorized to perform this action."
+                "message": "You are not allowed to do this."
             });
             console.error(error.message);
             break;
-        case custom_error_1.CUSTOM_ERROR_TYPE.INCORRECT_PARAMETER:
-        case custom_error_1.CUSTOM_ERROR_TYPE.MISSING_PARAMETER:
+        case custom_error_1.CUSTOM_ERROR_TYPE.ACTION_NOT_FOUND:
+            res.status(variables_1.CODE_STATUS.NOT_FOUND).json({
+                "message": "The action cannot be found."
+            });
+            console.error(error.message);
+            break;
+        // 400 code
+        case custom_error_1.CUSTOM_ERROR_TYPE.BAD_PARAMETER:
         case custom_error_1.CUSTOM_ERROR_TYPE.AVATAR_INCORRECT_FILE_TYPE:
         case custom_error_1.CUSTOM_ERROR_TYPE.USERNAME_TOO_MUCH_CHARACTERS:
         case custom_error_1.CUSTOM_ERROR_TYPE.USERNAME_INCORRECT_CHARACTERS:
         case custom_error_1.CUSTOM_ERROR_TYPE.USER_NOT_FOUND:
+        default:
             res.status(variables_1.CODE_STATUS.BAD_REQUEST).json({
                 "message": error.message
             });

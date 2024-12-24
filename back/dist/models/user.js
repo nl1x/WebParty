@@ -1,30 +1,63 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.initUserModel = initUserModel;
 const sequelize_1 = require("sequelize");
-const database_1 = __importDefault(require("@config/database"));
 const variables_1 = require("@config/variables");
+const roles_1 = __importDefault(require("@config/roles"));
+const role_1 = __importDefault(require("@models/role"));
+const roles_2 = __importDefault(require("@config/roles"));
 class User extends sequelize_1.Model {
+    hasPermission(requiredRole) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const role = yield role_1.default.findByPk(this.roleName);
+            return role !== null && role.weight >= roles_2.default[requiredRole].weight;
+        });
+    }
 }
-User.init({
-    id: {
-        type: sequelize_1.DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-    },
-    username: {
-        type: sequelize_1.DataTypes.STRING(variables_1.VAR_LENGTH.USERNAME),
-        unique: true
-    },
-    password: {
-        type: sequelize_1.DataTypes.STRING
-    },
-    avatarUrl: {
-        type: sequelize_1.DataTypes.STRING
-    },
-}, {
-    sequelize: database_1.default
-});
+function initUserModel(database) {
+    return __awaiter(this, void 0, void 0, function* () {
+        User.init({
+            id: {
+                type: sequelize_1.DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true,
+            },
+            username: {
+                type: sequelize_1.DataTypes.STRING(variables_1.VAR_LENGTH.USERNAME),
+                unique: true
+            },
+            password: {
+                type: sequelize_1.DataTypes.STRING(variables_1.VAR_LENGTH.PASSWORD)
+            },
+            avatarUrl: {
+                type: sequelize_1.DataTypes.STRING(variables_1.VAR_LENGTH.PICTURE),
+                allowNull: false,
+                defaultValue: 'uploads/avatars/placeholder.png'
+            },
+            roleName: {
+                type: sequelize_1.DataTypes.STRING(variables_1.VAR_LENGTH.ROLE_NAME),
+                allowNull: false,
+                defaultValue: roles_1.default[variables_1.ROLE.USER].name,
+                references: {
+                    model: role_1.default,
+                    key: 'name'
+                },
+            }
+        }, {
+            sequelize: database, modelName: 'User'
+        });
+    });
+}
 exports.default = User;

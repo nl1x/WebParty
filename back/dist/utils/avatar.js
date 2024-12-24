@@ -36,15 +36,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.saveAvatarFile = saveAvatarFile;
-exports.deleteAvatar = deleteAvatar;
-exports.checkAvatar = checkAvatar;
+exports.saveActionProofFile = saveActionProofFile;
+exports.deleteFile = deleteFile;
+exports.checkFileAsImage = checkFileAsImage;
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const variables_1 = require("@config/variables");
 const custom_error_1 = __importStar(require("@errors/custom-error"));
-function saveAvatarFile(user, avatarPath) {
+function saveAvatarFile(user, currentAvatarPath) {
     return __awaiter(this, void 0, void 0, function* () {
-        const previousPath = avatarPath;
+        const previousPath = currentAvatarPath;
         const directory = path_1.default.dirname(previousPath);
         const extension = path_1.default.extname(previousPath);
         const avatarFileName = `${user.id}_avatar${extension}`;
@@ -54,30 +55,45 @@ function saveAvatarFile(user, avatarPath) {
         return newPath;
     });
 }
-function isAvatarFromMulter(avatar) {
-    return avatar.path !== undefined;
+function saveActionProofFile(userAction, currentActionProofPath) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const previousPath = currentActionProofPath;
+        const directory = path_1.default.dirname(previousPath);
+        const extension = path_1.default.extname(previousPath);
+        const userDirectory = path_1.default.join(directory, userAction.userId.toString());
+        const avatarFileName = `${userAction.actionId}_user-action${extension}`;
+        const newPath = path_1.default.join(userDirectory, avatarFileName);
+        userAction.proofPicture = newPath;
+        try {
+            yield fs_1.default.promises.access(userDirectory);
+        }
+        catch (error) {
+            yield fs_1.default.promises.mkdir(userDirectory, { recursive: true });
+        }
+        yield fs_1.default.promises.rename(previousPath, newPath);
+        return newPath;
+    });
 }
-function deleteAvatar(avatar) {
-    if (!avatar)
+function isFileFromMulter(file) {
+    return file.path !== undefined;
+}
+function deleteFile(file) {
+    if (!file)
         return;
     let path = null;
-    if (isAvatarFromMulter(avatar)) {
-        path = avatar.path;
+    if (isFileFromMulter(file)) {
+        path = file.path;
     }
     else {
-        path = avatar;
+        path = file;
     }
     fs_1.default.promises.rm(path)
         .catch((error) => {
         console.error("An error occurred while deleting the user avatar: ", error);
     });
 }
-function checkAvatar(avatar, res) {
+function checkFileAsImage(avatar, res) {
     if (!variables_1.AUTHORIZED_FILE_TYPES.IMAGES.includes(avatar.mimetype)) {
-        // res.status(CODE_STATUS.BAD_REQUEST).json({
-        //     "message": "Incorrect avatar file type."
-        // });
-        // return false;
         return new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.AVATAR_INCORRECT_FILE_TYPE, "Incorrect avatar file type.");
     }
     return null;

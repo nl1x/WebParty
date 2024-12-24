@@ -27,7 +27,7 @@ function updateUser(req, res) {
         if (username)
             authReq.user.username = username;
         if (avatar) {
-            const avatarError = (0, avatar_1.checkAvatar)(avatar);
+            const avatarError = (0, avatar_1.checkFileAsImage)(avatar);
             if (avatarError instanceof custom_error_1.default)
                 return (0, sequelize_1.default)(res, avatarError);
             yield (0, avatar_1.saveAvatarFile)(authReq.user, avatar.path);

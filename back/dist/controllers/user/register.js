@@ -61,7 +61,7 @@ function registerUser(req, res) {
         const avatar = req.file;
         // Checks if all the required parameters exists
         if (!username || !password) {
-            (0, avatar_1.deleteAvatar)(avatar);
+            (0, avatar_1.deleteFile)(avatar);
             res.status(variables_1.CODE_STATUS.BAD_REQUEST).json({
                 "message": "Missing parameters..."
             });
@@ -69,9 +69,9 @@ function registerUser(req, res) {
         }
         // Check if the avatar is an image
         if (avatar) {
-            const avatarError = (0, avatar_1.checkAvatar)(avatar);
+            const avatarError = (0, avatar_1.checkFileAsImage)(avatar);
             if (avatarError instanceof custom_error_1.default) {
-                (0, avatar_1.deleteAvatar)(avatar);
+                (0, avatar_1.deleteFile)(avatar);
                 return (0, sequelize_1.default)(res, avatarError);
             }
         }
@@ -88,7 +88,7 @@ function registerUser(req, res) {
                 "message": "An internal error occurred..."
             });
             console.error("An error occurred while hashing the user password: ", error);
-            (0, avatar_1.deleteAvatar)(avatar);
+            (0, avatar_1.deleteFile)(avatar);
             return;
         }
         // Pre-save the user to retrieve its ID
@@ -101,7 +101,7 @@ function registerUser(req, res) {
         }
         catch (error) {
             // Delete temporary avatar file
-            (0, avatar_1.deleteAvatar)(avatar);
+            (0, avatar_1.deleteFile)(avatar);
             return (0, sequelize_1.default)(res, error, {
                 uniqueConstraint: "Username already taken."
             });
@@ -114,7 +114,7 @@ function registerUser(req, res) {
         }
         catch (error) {
             yield user.destroy();
-            (0, avatar_1.deleteAvatar)(avatar);
+            (0, avatar_1.deleteFile)(avatar);
             return (0, sequelize_1.default)(res, error);
         }
         const token = yield (0, token_1.default)(user);

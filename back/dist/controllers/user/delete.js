@@ -12,10 +12,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = deleteUser;
+exports.deleteUser = deleteUser;
+exports.deleteMe = deleteMe;
 const sequelize_1 = __importDefault(require("@errors/sequelize"));
 const variables_1 = require("@config/variables");
+const user_1 = __importDefault(require("@models/user"));
 function deleteUser(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { userId } = req.body;
+        try {
+            yield user_1.default.destroy({ where: { id: userId } });
+        }
+        catch (error) {
+            return (0, sequelize_1.default)(res, error);
+        }
+        res.status(variables_1.CODE_STATUS.SUCCESS).json({
+            "message": `The account with ID '${userId}' has been deleted.`
+        });
+    });
+}
+function deleteMe(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const authReq = req;
         const user = authReq.user;
@@ -26,7 +42,7 @@ function deleteUser(req, res) {
             return (0, sequelize_1.default)(res, error);
         }
         res.status(variables_1.CODE_STATUS.SUCCESS).json({
-            "message": "Your account has been deleted."
+            "message": `The account with ID '${user.id}' (${user.username}) has been deleted.`
         });
     });
 }
