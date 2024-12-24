@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthenticatedRequest } from "@utils/token";
-import {deleteAvatar, checkAvatar, saveAvatarFile} from "@utils/avatar";
+import { checkFileAsImage, saveAvatarFile } from "@utils/avatar";
 import CustomError from "@errors/custom-error";
 import handleRequestError from "@errors/sequelize";
 import {CODE_STATUS} from "@config/variables";
@@ -17,7 +17,7 @@ export default async function updateUser(req: Request, res: Response)
         authReq.user.username = username;
 
     if (avatar) {
-        const avatarError = checkAvatar(avatar);
+        const avatarError = checkFileAsImage(avatar);
         if (avatarError instanceof CustomError)
             return handleRequestError(res, avatarError);
 

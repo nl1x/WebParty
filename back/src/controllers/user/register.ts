@@ -3,7 +3,7 @@ import {CODE_STATUS, REGEX, VAR_LENGTH,} from "@config/variables";
 import User from "@models/user";
 import hashPassword from "@utils/hash";
 import handleRequestError from "@errors/sequelize";
-import {deleteAvatar, checkAvatar, saveAvatarFile} from "@utils/avatar";
+import {deleteFile, checkFileAsImage, saveAvatarFile} from "@utils/avatar";
 import generateToken from "@utils/token";
 import CustomError, {CUSTOM_ERROR_TYPE} from "@errors/custom-error";
 
@@ -36,7 +36,7 @@ export default async function registerUser(req: Request, res: Response)
 
     // Checks if all the required parameters exists
     if (!username || !password) {
-        deleteAvatar(avatar);
+        deleteFile(avatar);
         res.status(CODE_STATUS.BAD_REQUEST).json({
             "message": "Missing parameters..."
         });
@@ -45,9 +45,9 @@ export default async function registerUser(req: Request, res: Response)
 
     // Check if the avatar is an image
     if (avatar) {
-        const avatarError = checkAvatar(avatar);
+        const avatarError = checkFileAsImage(avatar);
         if (avatarError instanceof CustomError) {
-            deleteAvatar(avatar);
+            deleteFile(avatar);
             return handleRequestError(res, avatarError);
         }
     }
@@ -65,7 +65,7 @@ export default async function registerUser(req: Request, res: Response)
             "message": "An internal error occurred..."
         });
         console.error("An error occurred while hashing the user password: ", error);
-        deleteAvatar(avatar);
+        deleteFile(avatar);
         return;
     }
 
@@ -78,7 +78,7 @@ export default async function registerUser(req: Request, res: Response)
         });
     } catch (error) {
         // Delete temporary avatar file
-        deleteAvatar(avatar);
+        deleteFile(avatar);
         return handleRequestError(res, error, {
             uniqueConstraint: "Username already taken."
         });
@@ -92,7 +92,7 @@ export default async function registerUser(req: Request, res: Response)
         user = await user.save();
     } catch (error) {
         await user.destroy();
-        deleteAvatar(avatar);
+        deleteFile(avatar);
         return handleRequestError(res, error);
     }
 

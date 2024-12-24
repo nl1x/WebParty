@@ -4,6 +4,8 @@ import {CODE_STATUS} from "@config/variables";
 import handleRequestError from "@errors/sequelize";
 import CustomError, {CUSTOM_ERROR_TYPE} from "@errors/custom-error";
 import {AuthenticatedRequest} from "@utils/token";
+import Role from "@models/role";
+import UserAction from "@models/user-action";
 
 // ===============================
 //   TODO : Review this function
@@ -11,7 +13,11 @@ import {AuthenticatedRequest} from "@utils/token";
 export async function getUsers(req: Request, res: Response)
 {
     User.findAll({
-        attributes: {exclude: ['password']},
+        attributes: { exclude: ['password'] },
+        include: [
+            {model: Role, as: 'role'},
+            {model: UserAction, as: 'actions'}
+        ]
     })
         .then((users) => {
             res.status(CODE_STATUS.SUCCESS).json({
@@ -29,41 +35,23 @@ export async function getUser(req: Request, res: Response)
 
     if (!userId)
         return handleRequestError(res, new CustomError(
-            CUSTOM_ERROR_TYPE.MISSING_PARAMETER,
+            CUSTOM_ERROR_TYPE.BAD_PARAMETER,
             "The parameter 'id' is missing."
         ));
 
     // Check if the userId is a positive integer
     if (!(/^\d+$/.test(userId)))
         return handleRequestError(res, new CustomError(
-            CUSTOM_ERROR_TYPE.INCORRECT_PARAMETER,
+            CUSTOM_ERROR_TYPE.BAD_PARAMETER,
             "The parameter 'id' should be a positive integer."
         ));
 
     const user = await User.findByPk(parseInt(userId), {
         attributes: {
             exclude: ['password']
-        }
+        },
+        include: [{model: Role, as: 'role'}, {model: UserAction, as: 'actions'}]
     });
-
-    if (user === null) {
-        return handleRequestError(res, new CustomError(
-            CUSTOM_ERROR_TYPE.USER_NOT_FOUND,
-            "The requested user cannot be found."
-        ));
-    }
-
-    res.status(CODE_STATUS.SUCCESS).json({
-        "user": user
-    });
-}
-
-export async function getMe(req: Request, res: Response)
-{
-    const authReq = req as AuthenticatedRequest;
-    const { id: userId } = req.body;
-
-    const user = await User.findByPk(userId);
 
     if (user === null) {
         return handleRequestError(res, new CustomError(

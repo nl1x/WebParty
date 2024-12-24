@@ -4,6 +4,7 @@ import {AuthenticatedRequest, decodeToken} from "@utils/token";
 import User from "@models/user";
 import handleRequestError from "@errors/sequelize";
 import CustomError, {CUSTOM_ERROR_TYPE} from "@errors/custom-error";
+import Role from "@models/role";
 
 export default async function checkAuthentication(req: Request, res: Response, next: NextFunction)
 {
@@ -18,7 +19,14 @@ export default async function checkAuthentication(req: Request, res: Response, n
         return;
     }
 
-    const user = await User.findByPk(decodedToken.id);
+    const user = await User.findByPk(
+        decodedToken.id,
+        {
+            attributes: {
+                exclude: ['password']
+            }
+        }
+    );
 
     if (user === null) {
         return handleRequestError(

@@ -16,7 +16,13 @@ const AUTHORIZED_FILE_TYPES = {
 }
 
 const VAR_LENGTH = {
-    USERNAME: parseInt(process.env.USERNAME_MAX_LENGTH || '16')
+    USERNAME: parseInt(process.env.USERNAME_MAX_LENGTH || '16'),
+    DISPLAY_NAME: parseInt(process.env.DISPLAY_NAME_MAX_LENGTH || '16'),
+    ROLE_NAME: parseInt(process.env.ROLE_NAME_MAX_LENGTH || '16'),
+    ACTION: parseInt(process.env.ACTION_MAX_LENGTH || '128'),
+    PICTURE: parseInt(process.env.PICTURE_MAX_LENGTH || '64'),
+    ACTION_STATUS: 16,
+    PASSWORD: 128
 }
 
 const REGEX = {
@@ -36,4 +42,26 @@ enum SEQUELIZE_ERRORS {
     CONNECTION_REFUSED="SequelizeConnectionRefusedError",
 }
 
-export { CODE_STATUS, AUTHORIZED_FILE_TYPES, VAR_LENGTH, REGEX, DEFAULT, SEQUELIZE_ERRORS };
+enum ROLE {
+    ADMIN,
+    ORGANISER,
+    USER,
+}
+
+enum ACTION_STATUS {
+    WAITING='waiting',
+    PENDING_APPROVAL='pending-approval',
+    NOT_DONE='not-done',
+    DONE='done'
+}
+
+export {
+    CODE_STATUS,
+    AUTHORIZED_FILE_TYPES,
+    VAR_LENGTH,
+    REGEX,
+    DEFAULT,
+    SEQUELIZE_ERRORS,
+    ROLE,
+    ACTION_STATUS
+};
