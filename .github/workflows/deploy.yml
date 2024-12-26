@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - feature/front-end
 
 
 jobs:
