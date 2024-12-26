@@ -1,0 +1,46 @@
+{
+  "name": "webparty-back",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "tests": "echo 'No test found...' && exit 1",
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon",
+    "build": "tsc",
+    "serve": "node dist/index.js"
+  },
+  "author": "nL1x",
+  "license": "ISC",
+  "description": "An api for the WebParty project",
+  "_moduleAliases": {
+    "@config": "dist/config",
+    "@models": "dist/models",
+    "@middlewares": "dist/middlewares",
+    "@routes": "dist/routes",
+    "@services": "dist/services",
+    "@controllers": "dist/controllers",
+    "@errors": "dist/errors",
+    "@utils": "dist/utils"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.9.0",
+    "@types/sequelize": "^4.28.20",
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.11.4",
+    "sequelize": "^6.37.5"
+  }
+}
