@@ -27,13 +27,9 @@ jobs:
 
       - name: "Deploy the app"
         uses: easingthemes/ssh-deploy@v2.1.4
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.SSH_REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.SSH_REMOTE_USER }}
-          SOURCE: "./"
-          TARGET: "~/${{ secrets.target }}/"
         with:
-          REMOTE_HOST: ${{ env.REMOTE_HOST }}
-          REMOTE_USER: ${{ env.REMOTE_USER }}
-          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_USER: ${{ secrets.SSH_REMOTE_HOST }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_REMOTE_USER }}
+          SOURCE: "./"
+          TARGET: "~/target/"
