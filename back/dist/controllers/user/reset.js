@@ -35,33 +35,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hasRole = hasRole;
-exports.hasPermissionsOf = hasPermissionsOf;
-const roles_1 = __importDefault(require("@config/roles"));
+exports.default = resetUserActions;
+const user_1 = __importDefault(require("@models/user"));
 const sequelize_1 = __importDefault(require("@errors/sequelize"));
 const custom_error_1 = __importStar(require("@errors/custom-error"));
-function hasRole(role) {
-    const requiredRole = roles_1.default[role];
-    return function (req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const authReq = req;
-            if (authReq.user.roleName !== requiredRole.name) {
-                return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.PERMISSION_DENIED));
-            }
-            next();
+const variables_1 = require("@config/variables");
+function resetUserActions(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { id } = req.params;
+        const userId = parseInt(id, 10);
+        let user = null;
+        try {
+            user = yield user_1.default.findByPk(userId);
+        }
+        catch (error) {
+            return (0, sequelize_1.default)(res, error);
+        }
+        if (!user) {
+            return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.USER_NOT_FOUND, "This user does not exist."));
+        }
+        yield user.resetActions();
+        res.status(variables_1.CODE_STATUS.SUCCESS).json({
+            message: "The actions of this user has been reset."
         });
-    };
-}
-function hasPermissionsOf(role) {
-    const requiredRole = roles_1.default[role];
-    return function (req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const authReq = req;
-            if (!((_a = authReq.user.role) === null || _a === void 0 ? void 0 : _a.weight) || authReq.user.role.weight < requiredRole.weight) {
-                return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.PERMISSION_DENIED));
-            }
-            next();
-        });
-    };
+    });
 }

@@ -46,7 +46,7 @@ function initActions() {
         for (let i = 0; i < 72; i++) {
             yield Action.findOrCreate({
                 where: {
-                    description: `Action_${i}`,
+                    description: `EASY_${i}`,
                     difficulty: 1
                 }
             });
@@ -54,7 +54,7 @@ function initActions() {
         for (let i = 0; i < 46; i++) {
             yield Action.findOrCreate({
                 where: {
-                    description: `Action_${i}`,
+                    description: `MEDIUM_${i}`,
                     difficulty: 2
                 }
             });
@@ -62,7 +62,7 @@ function initActions() {
         for (let i = 0; i < 16; i++) {
             yield Action.findOrCreate({
                 where: {
-                    description: `Action_${i}`,
+                    description: `HARD_${i}`,
                     difficulty: 3
                 }
             });

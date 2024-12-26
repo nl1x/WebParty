@@ -37,14 +37,14 @@ function loginUser(req, res) {
         }
         if (user === null) {
             res.status(variables_1.CODE_STATUS.BAD_REQUEST).json({
-                "message": "Incorrect username or password."
+                "message": "Incorrect 'username' or password."
             });
             return;
         }
         const passwordsMatch = yield (0, bcryptjs_1.compare)(password, user.password);
         if (!passwordsMatch) {
             res.status(variables_1.CODE_STATUS.BAD_REQUEST).json({
-                "message": "Incorrect username or password."
+                "message": "Incorrect username or 'password'."
             });
             return;
         }

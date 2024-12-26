@@ -41,6 +41,7 @@ const token_1 = require("@utils/token");
 const user_1 = __importDefault(require("@models/user"));
 const sequelize_1 = __importDefault(require("@errors/sequelize"));
 const custom_error_1 = __importStar(require("@errors/custom-error"));
+const role_1 = __importDefault(require("@models/role"));
 function checkAuthentication(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const authToken = req.headers.authorization;
@@ -54,7 +55,11 @@ function checkAuthentication(req, res, next) {
         const user = yield user_1.default.findByPk(decodedToken.id, {
             attributes: {
                 exclude: ['password']
-            }
+            },
+            include: [{
+                    model: role_1.default,
+                    as: 'role'
+                }]
         });
         if (user === null) {
             return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.USER_NOT_FOUND_BUT_AUTHENTICATED, `The user with ID '${decodedToken.id}' cannot be found when checking the user authentication token.`));

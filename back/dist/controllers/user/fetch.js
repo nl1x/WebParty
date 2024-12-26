@@ -37,31 +37,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUsers = getUsers;
 exports.getUser = getUser;
+exports.getMe = getMe;
 const user_1 = __importDefault(require("@models/user"));
 const variables_1 = require("@config/variables");
 const sequelize_1 = __importDefault(require("@errors/sequelize"));
 const custom_error_1 = __importStar(require("@errors/custom-error"));
 const role_1 = __importDefault(require("@models/role"));
 const user_action_1 = __importDefault(require("@models/user-action"));
-// ===============================
-//   TODO : Review this function
-// ===============================
+const action_1 = __importDefault(require("@models/action"));
 function getUsers(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        user_1.default.findAll({
-            attributes: { exclude: ['password'] },
-            include: [
-                { model: role_1.default, as: 'role' },
-                { model: user_action_1.default, as: 'actions' }
-            ]
-        })
-            .then((users) => {
-            res.status(variables_1.CODE_STATUS.SUCCESS).json({
-                "users": users
+        let users = null;
+        try {
+            users = yield user_1.default.findAll({
+                attributes: { exclude: ['password'] },
+                include: [
+                    {
+                        model: role_1.default,
+                        as: 'role'
+                    }
+                ]
             });
-        })
-            .catch((error) => {
-            (0, sequelize_1.default)(res, error);
+        }
+        catch (error) {
+            return (0, sequelize_1.default)(res, error);
+        }
+        if (!users) {
+            return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.USER_NOT_FOUND, "No user have been found."));
+        }
+        let action = null;
+        // TODO: Partie du code à revoir
+        for (const user of users) {
+            action = yield user.getCurrentAction();
+            user.dataValues.action = action;
+            delete user.dataValues.actionsId;
+            delete user.dataValues.currentActionIndex;
+        }
+        res.status(variables_1.CODE_STATUS.SUCCESS).json({
+            "users": users
         });
     });
 }
@@ -77,13 +90,48 @@ function getUser(req, res) {
             attributes: {
                 exclude: ['password']
             },
-            include: [{ model: role_1.default, as: 'role' }, { model: user_action_1.default, as: 'actions' }]
+            include: [
+                {
+                    model: role_1.default,
+                    as: 'role'
+                },
+                {
+                    model: user_action_1.default,
+                    as: 'actions',
+                    attributes: { exclude: ['userId', 'actionId'] },
+                    include: [{
+                            model: action_1.default,
+                            as: 'action',
+                            attributes: { exclude: ['id'] }
+                        }]
+                }
+            ]
         });
         if (user === null) {
             return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.USER_NOT_FOUND, "The requested user cannot be found."));
         }
+        user.dataValues.action = yield user.getCurrentAction();
+        delete user.dataValues.actionsId;
+        delete user.dataValues.currentActionIndex;
         res.status(variables_1.CODE_STATUS.SUCCESS).json({
             "user": user
+        });
+    });
+}
+function getMe(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const authReq = req;
+        try {
+            yield authReq.user.setActionHistory();
+        }
+        catch (error) {
+            return (0, sequelize_1.default)(res, error);
+        }
+        authReq.user.dataValues.action = yield authReq.user.getCurrentAction();
+        delete authReq.user.dataValues.actionsId;
+        delete authReq.user.dataValues.currentActionIndex;
+        res.status(variables_1.CODE_STATUS.SUCCESS).json({
+            "me": authReq.user
         });
     });
 }

@@ -40,15 +40,18 @@ function assignActions(req, res) {
         const settings = [
             {
                 actions: easyActions,
-                amountPerUser: 6
+                amountPerUser: 6,
+                currentIndex: 0
             },
             {
                 actions: mediumActions,
-                amountPerUser: 4
+                amountPerUser: 4,
+                currentIndex: 0
             },
             {
                 actions: hardActions,
-                amountPerUser: 2
+                amountPerUser: 2,
+                currentIndex: 0
             }
         ];
         try {
@@ -59,27 +62,37 @@ function assignActions(req, res) {
             return (0, sequelize_1.default)(res, error);
         }
         // This code part is scarily ugly... :')
-        for (const setting of settings) {
-            if (setting.actions.length === 0)
-                continue;
-            let i = 0;
-            setting.actions = (0, shuffle_1.default)(setting.actions);
-            for (const user of users) {
+        for (const user of users) {
+            let userAction = null;
+            const actionsId = [];
+            for (const setting of settings) {
+                if (setting.actions.length === 0)
+                    continue;
+                setting.actions = (0, shuffle_1.default)(setting.actions);
                 for (let j = 0; j < setting.amountPerUser && j < setting.actions.length; j++) {
-                    if (i >= setting.actions.length)
-                        i = 0;
+                    if (j >= setting.actions.length)
+                        j = 0;
                     try {
-                        yield user_action_1.default.create({
+                        userAction = yield user_action_1.default.create({
                             userId: user.id,
-                            actionId: setting.actions[i].id,
-                            requireProof: setting.actions[i].requireProof
+                            actionId: setting.actions[setting.currentIndex].id,
+                            requireProof: setting.actions[setting.currentIndex].requireProof,
+                            nextUserActionId: null
                         });
-                        i++;
+                        actionsId.push(userAction.id);
+                        setting.currentIndex++;
                     }
                     catch (error) {
                         return (0, sequelize_1.default)(res, error);
                     }
                 }
+            }
+            user.setActionsId(actionsId);
+            try {
+                yield user.save();
+            }
+            catch (error) {
+                return (0, sequelize_1.default)(res, error);
             }
         }
         res.status(variables_1.CODE_STATUS.SUCCESS).json({

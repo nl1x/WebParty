@@ -87,7 +87,6 @@ function registerUser(req, res) {
             res.status(variables_1.CODE_STATUS.INTERNAL).json({
                 "message": "An internal error occurred..."
             });
-            console.error("An error occurred while hashing the user password: ", error);
             (0, avatar_1.deleteFile)(avatar);
             return;
         }

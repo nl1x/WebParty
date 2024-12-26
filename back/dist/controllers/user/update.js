@@ -17,13 +17,24 @@ const avatar_1 = require("@utils/avatar");
 const custom_error_1 = __importDefault(require("@errors/custom-error"));
 const sequelize_1 = __importDefault(require("@errors/sequelize"));
 const variables_1 = require("@config/variables");
+const hash_1 = __importDefault(require("@utils/hash"));
 function updateUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const authReq = req;
         const { username, password } = authReq.body;
         const avatar = authReq.file;
-        if (password)
-            authReq.user.password = password;
+        if (password) {
+            try {
+                authReq.user.password = yield (0, hash_1.default)(password);
+            }
+            catch (error) {
+                res.status(variables_1.CODE_STATUS.INTERNAL).json({
+                    "message": "An internal error occurred..."
+                });
+                console.error("An error occurred while hashing the user password: ", error);
+                return;
+            }
+        }
         if (username)
             authReq.user.username = username;
         if (avatar) {

@@ -22,10 +22,14 @@ class UserAction extends sequelize_1.Model {
 function initUserActionModel(database) {
     return __awaiter(this, void 0, void 0, function* () {
         UserAction.init({
+            id: {
+                type: sequelize_1.DataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true
+            },
             userId: {
                 type: sequelize_1.DataTypes.INTEGER,
                 allowNull: false,
-                primaryKey: true,
                 references: {
                     model: user_1.default,
                     key: 'id'
@@ -34,7 +38,6 @@ function initUserActionModel(database) {
             actionId: {
                 type: sequelize_1.DataTypes.INTEGER,
                 allowNull: false,
-                primaryKey: true,
                 references: {
                     model: action_1.default,
                     key: 'id'

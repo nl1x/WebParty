@@ -81,7 +81,8 @@ function initializeDatabase() {
         });
         user_action_1.default.belongsTo(action_1.default, {
             foreignKey: 'actionId',
-            targetKey: 'id'
+            targetKey: 'id',
+            as: 'action'
         });
         user_1.default.belongsTo(role_1.default, {
             foreignKey: 'roleName',
