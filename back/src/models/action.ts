@@ -41,7 +41,7 @@ export async function initActions()
     for (let i = 0; i < 72; i++) {
         await Action.findOrCreate({
             where: {
-                description: `Action_${i}`,
+                description: `EASY_${i}`,
                 difficulty: 1
             }
         });
@@ -49,7 +49,7 @@ export async function initActions()
     for (let i = 0; i < 46; i++) {
         await Action.findOrCreate({
             where: {
-                description: `Action_${i}`,
+                description: `MEDIUM_${i}`,
                 difficulty: 2
             }
         });
@@ -57,7 +57,7 @@ export async function initActions()
     for (let i = 0; i < 16; i++) {
         await Action.findOrCreate({
             where: {
-                description: `Action_${i}`,
+                description: `HARD_${i}`,
                 difficulty: 3
             }
         });

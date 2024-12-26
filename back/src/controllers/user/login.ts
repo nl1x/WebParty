@@ -4,6 +4,8 @@ import User from "@models/user";
 import {CODE_STATUS} from "@config/variables";
 import handleRequestErrors from "@errors/sequelize";
 import generateToken from "@utils/token";
+import hashPassword from "@utils/hash";
+import {deleteFile} from "@utils/avatar";
 
 export default async function loginUser(req: Request, res: Response) {
     const username = req.body['username'];
@@ -25,7 +27,7 @@ export default async function loginUser(req: Request, res: Response) {
 
     if (user === null) {
         res.status(CODE_STATUS.BAD_REQUEST).json({
-            "message": "Incorrect username or password."
+            "message": "Incorrect 'username' or password."
         });
         return;
     }
@@ -34,7 +36,7 @@ export default async function loginUser(req: Request, res: Response) {
 
     if (!passwordsMatch) {
         res.status(CODE_STATUS.BAD_REQUEST).json({
-            "message": "Incorrect username or password."
+            "message": "Incorrect username or 'password'."
         });
         return;
     }

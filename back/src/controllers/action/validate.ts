@@ -41,6 +41,147 @@ async function checkProofPicture(res: Response, proofPicture: Express.Multer.Fil
     return false;
 }
 
+async function changeToPendingForApproval(currentAction: UserAction, proofPicture: Express.Multer.File|undefined, res: Response)
+{
+    const isProofPictureValid = await checkProofPicture(res, proofPicture, currentAction);
+    if (!isProofPictureValid)
+        return;
+
+    currentAction.status = ACTION_STATUS.PENDING_APPROVAL;
+
+    try {
+        await currentAction.save();
+    } catch (error) {
+        return handleRequestError(res, error);
+    }
+
+    res.status(CODE_STATUS.SUCCESS).json({
+        "message": "The action is waiting for approval..."
+    });
+}
+
+export async function validateAction(req: Request, res: Response)
+{
+    const authReq = req as AuthenticatedRequest;
+    const { isDone } = req.body;
+    const proofPicture = req.file;
+    let currentAction = null;
+    let actionsId = authReq.user.getActionsId();
+
+    if (authReq.user.currentActionIndex >= actionsId.length) {
+        deleteFile(proofPicture);
+        return handleRequestError(res, new CustomError(
+            CUSTOM_ERROR_TYPE.ACTION_NOT_FOUND,
+            "You don't have any action to do."
+        ));
+    }
+
+    try {
+        currentAction = await UserAction.findByPk(
+            actionsId[authReq.user.currentActionIndex],
+            {
+                include: [{
+                    model: Action,
+                    as: 'action'
+                }]
+            }
+        );
+    } catch (error) {
+        deleteFile(proofPicture);
+        return handleRequestError(res, error);
+    }
+
+    if (!currentAction || !currentAction.action) {
+        deleteFile(proofPicture);
+        return handleRequestError(res, new CustomError(
+            CUSTOM_ERROR_TYPE.ACTION_NOT_FOUND,
+            "Your current action cannot be found."
+        ));
+    }
+
+    if (!currentAction.action.requireProof)
+        deleteFile(proofPicture);
+
+    if (!isDone) {
+        currentAction.status = ACTION_STATUS.NOT_DONE;
+    } else if (currentAction.action.requireProof) {
+        return changeToPendingForApproval(currentAction, proofPicture, res)
+    } else {
+        currentAction.status = ACTION_STATUS.DONE;
+    }
+
+    authReq.user.currentActionIndex++;
+
+    try {
+        await currentAction.save();
+        await authReq.user.save();
+    } catch (error) {
+        return handleRequestError(res, error);
+    }
+
+    res.status(CODE_STATUS.SUCCESS).json({
+        message: `The action has been set as ${isDone ? 'done' : 'not done'}.`
+    });
+}
+
+export async function approveAction(req: Request, res: Response)
+{
+    const { id: userActionId } = req.params;
+    const { isApproved } = req.body;
+    const parsedUserActionId = parseInt(userActionId, 10);
+    let userAction = null;
+
+    try {
+        userAction = await UserAction.findByPk(parsedUserActionId);
+    } catch (error) {
+        return handleRequestError(res, error);
+    }
+
+    if (userAction === null) {
+        return handleRequestError(res, new CustomError(
+            CUSTOM_ERROR_TYPE.BAD_PARAMETER,
+            "This user action cannot be found."
+        ));
+    }
+
+    if (userAction.status !== ACTION_STATUS.PENDING_APPROVAL) {
+        return handleRequestError(res, new CustomError(
+            CUSTOM_ERROR_TYPE.BAD_PARAMETER,
+            "This action is not pending for approval."
+        ));
+    }
+
+    userAction.status = isApproved ? ACTION_STATUS.DONE : ACTION_STATUS.NOT_DONE;
+
+    let user = null;
+
+    try {
+        user = await User.findByPk(userAction.userId);
+    } catch (error) {
+        return handleRequestError(res, error);
+    }
+
+    if (!user) {
+        return handleRequestError(res, new CustomError(
+            CUSTOM_ERROR_TYPE.ACTION_NOT_FOUND,
+            "This user action does not exist."
+        ));
+    }
+
+    user.currentActionIndex++;
+
+    try {
+        await userAction.save();
+        await user.save();
+    } catch (error) {
+        return handleRequestError(res, error);
+    }
+
+    res.status(CODE_STATUS.SUCCESS).json({
+        message: `The action has${isApproved ? '' : ' not'} been approved.`
+    });
+}
+
 export default async function changeActionStatus(req: Request, res: Response)
 {
     const authReq = req as AuthenticatedRequest;
@@ -107,7 +248,7 @@ export default async function changeActionStatus(req: Request, res: Response)
                 if (proofPicture) {
                     deleteFile(proofPicture);
                 }
-                _continue = await checkUserPermissions(authReq.user, res);
+                _continue = await checkUserPermissions(authReq.user, res);// && await selectNextAction(authReq.user, res);
                 break;
         }
 

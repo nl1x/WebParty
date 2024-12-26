@@ -50,7 +50,8 @@ export async function initializeDatabase() {
 
     UserAction.belongsTo(Action, {
         foreignKey: 'actionId',
-        targetKey: 'id'
+        targetKey: 'id',
+        as: 'action'
     });
 
     User.belongsTo(Role, {

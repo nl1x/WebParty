@@ -24,7 +24,11 @@ export default async function checkAuthentication(req: Request, res: Response, n
         {
             attributes: {
                 exclude: ['password']
-            }
+            },
+            include: [{
+                model: Role,
+                as: 'role'
+            }]
         }
     );
 

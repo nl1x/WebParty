@@ -64,7 +64,6 @@ export default async function registerUser(req: Request, res: Response)
         res.status(CODE_STATUS.INTERNAL).json({
             "message": "An internal error occurred..."
         });
-        console.error("An error occurred while hashing the user password: ", error);
         deleteFile(avatar);
         return;
     }

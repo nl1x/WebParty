@@ -5,6 +5,7 @@ import shuffle from "@utils/shuffle";
 import UserAction from "@models/user-action";
 import handleRequestError from "@errors/sequelize";
 import {CODE_STATUS} from "@config/variables";
+import CustomError from "@errors/custom-error";
 
 export default async function assignActions(req: Request, res: Response)
 {
@@ -29,15 +30,18 @@ export default async function assignActions(req: Request, res: Response)
     const settings = [
         {
             actions: easyActions,
-            amountPerUser: 6
+            amountPerUser: 6,
+            currentIndex: 0
         },
         {
             actions: mediumActions,
-            amountPerUser: 4
+            amountPerUser: 4,
+            currentIndex: 0
         },
         {
             actions: hardActions,
-            amountPerUser: 2
+            amountPerUser: 2,
+            currentIndex: 0
         }
     ];
 
@@ -49,30 +53,41 @@ export default async function assignActions(req: Request, res: Response)
     }
 
     // This code part is scarily ugly... :')
-    for (const setting of settings) {
-        if (setting.actions.length === 0)
-            continue;
+    for (const user of users) {
+        let userAction = null;
+        const actionsId = [];
 
-        let i = 0;
-        setting.actions = shuffle(setting.actions);
+        for (const setting of settings) {
+            if (setting.actions.length === 0)
+                continue;
 
-        for (const user of users) {
+            setting.actions = shuffle(setting.actions);
+
             for (let j = 0; j < setting.amountPerUser && j < setting.actions.length; j++) {
 
-                if (i >= setting.actions.length)
-                    i = 0;
+                if (j >= setting.actions.length)
+                    j = 0;
 
                 try {
-                    await UserAction.create({
+                    userAction = await UserAction.create({
                         userId: user.id,
-                        actionId: setting.actions[i].id,
-                        requireProof: setting.actions[i].requireProof
+                        actionId: setting.actions[setting.currentIndex].id,
+                        requireProof: setting.actions[setting.currentIndex].requireProof,
+                        nextUserActionId: null
                     });
-                    i++;
+                    actionsId.push(userAction.id);
+                    setting.currentIndex++;
                 } catch (error) {
                     return handleRequestError(res, error);
                 }
             }
+        }
+
+        user.setActionsId(actionsId);
+        try {
+            await user.save();
+        } catch (error) {
+            return handleRequestError(res, error);
         }
     }
 

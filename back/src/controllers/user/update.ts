@@ -4,6 +4,7 @@ import { checkFileAsImage, saveAvatarFile } from "@utils/avatar";
 import CustomError from "@errors/custom-error";
 import handleRequestError from "@errors/sequelize";
 import {CODE_STATUS} from "@config/variables";
+import hashPassword from "@utils/hash";
 
 export default async function updateUser(req: Request, res: Response)
 {
@@ -11,8 +12,18 @@ export default async function updateUser(req: Request, res: Response)
     const { username, password } = authReq.body;
     const avatar = authReq.file;
 
-    if (password)
-        authReq.user.password = password;
+    if (password) {
+        try {
+            authReq.user.password = await hashPassword(password);
+        } catch (error) {
+            res.status(CODE_STATUS.INTERNAL).json({
+                "message": "An internal error occurred..."
+            });
+            console.error("An error occurred while hashing the user password: ", error);
+            return;
+        }
+    }
+
     if (username)
         authReq.user.username = username;
 
