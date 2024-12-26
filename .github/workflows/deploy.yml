@@ -20,10 +20,10 @@ jobs:
           node-version: '22'  # Remplacez par la version Node.js souhaitée
 
       - name: "Install dependencies"
-        run: npm install
+        run: cd ~/back && npm install
 
       - name: "Build the application"
-        run: npm run build
+        run: cd ~/back && npm run build
 
       - name: "Deploy the app"
         uses: easingthemes/ssh-deploy@v2.1.4
