@@ -49,5 +49,6 @@ export default async function loginUser(req: Request, res: Response) {
             sameSite: 'strict'
         }).json({
             "message": "Successfully authenticated.",
+            "session": token
         });
 }
