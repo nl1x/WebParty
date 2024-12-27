@@ -1,0 +1,42 @@
+
+.button > input {
+    background-color: white;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 15px 10px;
+    position: relative;
+
+    color: black;
+    font-size: small;
+    font-weight: 700;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    cursor: pointer;
+
+    &.disabled {
+        cursor: not-allowed;
+    }
+
+    &:focus {
+        outline: none;
+        border: solid 1px white;
+    }
+}
+
+.button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    > .button__loader {
+        position: absolute;
+        height: 80px;
+        width: 80px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
