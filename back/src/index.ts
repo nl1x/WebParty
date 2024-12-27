@@ -6,6 +6,7 @@ import publicRouter from "@routes/public";
 import authRouter from "@routes/auth";
 import {initializeDatabase} from "@config/database";
 import actionRouter from "@routes/action";
+import cors from "cors";
 
 // Load the environment variables
 dotenv.config();
@@ -19,6 +20,11 @@ const port = process.env.API_PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const corsOptions = {
+  origin: process.env.FRONTEND_URL
+};
+app.use(cors(corsOptions));
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello, TypeScript Express!');
