@@ -55,6 +55,7 @@ function loginUser(req, res) {
             sameSite: 'strict'
         }).json({
             "message": "Successfully authenticated.",
+            "session": token
         });
     });
 }
