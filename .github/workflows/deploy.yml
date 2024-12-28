@@ -20,13 +20,14 @@ jobs:
           node-version: '22'  # Remplacez par la version Node.js souhaitée
 
       - name: "Install dependencies"
-        run: cd back && npm install
+        run: |
+          cd ~/back && npm install
+          cd ~/front && npm install
 
-      - name: "Build the application back-end"
-        run: cd back && npm run build
-
-      - name: "Build the application front-end"
-        run: cd front && npm run build
+      - name: "Build the application"
+        run: |
+          cd ~/back && npm run build
+          cd ~/front && npm run build
 
       - name: "Deploy the app"
         if: success()
