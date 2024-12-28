@@ -29,6 +29,7 @@
       "@assets/*": ["src/assets/*"],
       "@config/*": ["src/config/*"],
       "@components/*": ["src/components/*"],
+      "@path/*": ["src/path/*"],
       "@hooks/*": ["src/hooks/*"],
       "@views/*": ["src/views/*"],
     },
