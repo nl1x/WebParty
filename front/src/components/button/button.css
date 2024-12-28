@@ -1,37 +1,49 @@
-
-.button > input {
-    background-color: white;
-    border: 1px solid white;
-    border-radius: 5px;
-    padding: 15px 10px;
-    position: relative;
-
-    color: black;
-    font-size: small;
-    font-weight: 700;
-
-    width: 100%;
-    box-sizing: border-box;
-
-    cursor: pointer;
-
-    &.disabled {
-        cursor: not-allowed;
-    }
-
-    &:focus {
-        outline: none;
-        border: solid 1px white;
-    }
-}
-
 .button {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid white;
+    border-radius: 5px;
+
+    user-select: none;
+    -moz-user-select: none; /* Firefox */
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    -webkit-tap-highlight-color: transparent;
+
+    &.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    &.primary {
+        background-color: white;
+        color: black;
+    }
+
+    &.secondary {
+        background-color: transparent;
+        color: white;
+    }
+
+    &.header {
+        background-color: transparent;
+        color: white;
+        border-radius: 100px;
+        padding: 5px 10px;
+
+        > input {
+            text-transform: uppercase;
+            font-weight: 500;
+            font-size: 12px;
+            padding: 0;
+        }
+        /*border: 1px solid white;*/
+    }
 
     > .button__loader {
+        color: inherit;
         position: absolute;
         height: 80px;
         width: 80px;
@@ -39,4 +51,31 @@
         left: 50%;
         transform: translate(-50%, -50%);
     }
+
+    > input {
+        color: inherit;
+        background-color: inherit;
+        border: none;
+        border-radius: inherit;
+        padding: 15px 10px;
+        position: relative;
+
+        font-size: small;
+        font-weight: 700;
+
+        box-sizing: border-box;
+
+        cursor: pointer;
+
+        &.disabled {
+            cursor: not-allowed;
+        }
+
+        &:focus, &:active {
+            outline: none;
+            border: none;
+        }
+
+    }
+
 }

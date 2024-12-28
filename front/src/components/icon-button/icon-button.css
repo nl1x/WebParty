@@ -1,0 +1,8 @@
+.icon-button {
+    padding: 10px;
+    width: fit-content;
+
+    &:focus, &:active {
+        outline: none;
+    }
+}

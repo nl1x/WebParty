@@ -1,30 +1,38 @@
 import './button.css';
+import React from 'react';
 import BubbleLoader from "@components/loader/bubble-loader.tsx";
 
 interface ButtonProps {
     text: string;
     onClick: () => void;
-    variant?: 'primary' | 'secondary';
+    variant?: 'primary' | 'secondary' | 'header';
     className?: string;
     loading?: boolean;
+    disabled?: boolean;
+    icon?: React.ReactNode;
 }
 
 export default function Button(props: ButtonProps)
 {
 
     return (
-        <div className={props.className + " button " + (props.variant ?? 'primary')}>
+        <div
+          onClick={() => props.onClick()}
+          className={"button"
+            + (' ' + props.className)
+            + (' ' + (props.variant ?? ' primary'))
+            + (props.disabled ? ' disabled' : '')
+          }
+        >
+            {props.icon}
             <input
                 value={props.loading ? '' : props.text}
-                onClick={
-                    () => props.onClick()
-                }
                 type='button'
-                disabled={props.loading}
+                disabled={props.loading || props.disabled}
             />
             {props.loading &&
               <div className='button__loader'>
-                <BubbleLoader/>
+                <BubbleLoader color="inherit"/>
               </div>
             }
         </div>
