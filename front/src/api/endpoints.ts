@@ -5,6 +5,9 @@ const Endpoints = {
     users: {
         me: '/users/me',
     },
+    actions: {
+        validate: '/actions/validate-current',
+    }
 }
 
 export default Endpoints;
