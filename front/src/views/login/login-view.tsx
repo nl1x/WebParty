@@ -1,6 +1,6 @@
 import './login-view.css';
 
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import {login} from "@api/auth.ts";
 
@@ -12,9 +12,12 @@ import PersonIcon from '@mui/icons-material/Person';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import useNavigatorContext from "@hooks/navigator/navigator-provider.tsx";
+import useAuthContext from "@hooks/auth/auth-provider.tsx";
+import {PATH} from "@path/path.tsx";
 
 export default function LoginView()
 {
+    const { isLoggedIn } = useAuthContext();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -22,12 +25,18 @@ export default function LoginView()
     const [error, setError] = useState(false);
     const { navigate } = useNavigatorContext();
 
+    useEffect(() => {
+      if (isLoggedIn()) {
+        navigate(PATH.HOME);
+      }
+    }, []);
+
     const handleLogin = async () => {
       setLoading(true);
       const isLoggedIn = await login(username, password);
 
       if (isLoggedIn) {
-        navigate('/home');
+        navigate(PATH.HOME);
       } else {
         setError(true);
         setTimeout(() => {
@@ -58,6 +67,7 @@ export default function LoginView()
                   leftIcon={<PersonIcon/>}
                   rightIcon={<PersonIcon sx={{ opacity: 0 }}/>}
                   onClick={() => setError(false)}
+                  onPressEnter={() => handleLogin()}
                   onChange={(newValue) => setUsername(newValue)}
                   variant={error ? "error" : "default"}
                   disabled={loading}
@@ -68,6 +78,7 @@ export default function LoginView()
                   value={password}
                   onClick={() => setError(false)}
                   onChange={(newValue) => setPassword(newValue)}
+                  onPressEnter={() => handleLogin()}
                   leftIcon={<LockIcon/>}
                   rightIcon={showPassword
                       ? <VisibilityIcon className='clickable' onClick={() => setShowPassword(false)}/>
@@ -77,6 +88,7 @@ export default function LoginView()
                   disabled={loading}
               />
               <Button
+                  variant="primary"
                   className="login-button"
                   text="Se connecter"
                   onClick={handleLogin}

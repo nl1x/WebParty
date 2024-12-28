@@ -1,0 +1,44 @@
+.camera-view {
+
+    width: 90svw;
+    height: 95svh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .camera-view__card {
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+    }
+
+
+    .camera-view__controller {
+
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
+        .camera-view__capture-button, .camera-view__flip-button {
+            display: flex;
+            align-items: center;
+            border-radius: 100%;
+            padding: 20px;
+            margin: 25px;
+            background-color: white;
+            color: black;
+
+            > svg {
+                font-size: 2em;
+            }
+
+        }
+
+    }
+}
