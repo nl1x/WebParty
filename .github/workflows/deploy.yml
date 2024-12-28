@@ -22,10 +22,14 @@ jobs:
       - name: "Install dependencies"
         run: cd back && npm install
 
-      - name: "Build the application"
+      - name: "Build the application back-end"
         run: cd back && npm run build
 
+      - name: "Build the application front-end"
+        run: cd front && npm run build
+
       - name: "Deploy the app"
+        if: success()
         uses: easingthemes/ssh-deploy@v2.1.4
         with:
           REMOTE_HOST: ${{ secrets.SSH_REMOTE_HOST }}
