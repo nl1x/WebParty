@@ -21,13 +21,13 @@ jobs:
 
       - name: "Install dependencies"
         run: |
-          cd back && npm install && cd ..
           cd front && npm install
 
       - name: "Build the application"
         if: success()
         env:
           VITE_HOST_API: ${{ secrets.VITE_HOST_API }}
+          VITE_ENVIRONMENT: 'production'
         run: |
           cd front && npm run build && chmod -R +rw dist/
 
