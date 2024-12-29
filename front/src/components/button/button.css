@@ -31,13 +31,24 @@
         background-color: transparent;
         color: white;
         border-radius: 100px;
-        padding: 5px 10px;
+        width: fit-content;
+        padding: 5px 20px;
 
         > input {
             text-transform: uppercase;
             font-weight: 500;
             font-size: 12px;
             padding: 0;
+            padding-left: 1px;
+        }
+
+        .button__icon {
+            display: flex;
+            align-items: center;
+
+            font-size: 120%;
+            color: yellow;
+            padding-right: 5px;
         }
         /*border: 1px solid white;*/
     }
@@ -76,6 +87,11 @@
             border: none;
         }
 
+    }
+
+    .button__icon {
+        display: flex;
+        align-items: center;
     }
 
 }

@@ -10,26 +10,32 @@ interface ButtonProps {
     loading?: boolean;
     disabled?: boolean;
     icon?: React.ReactNode;
+    iconPosition?: 'left' | 'right';
 }
 
 export default function Button(props: ButtonProps)
 {
 
+    const handleClick = props.disabled ? (() => {}) : props.onClick;
+
     return (
         <div
-          onClick={() => props.onClick()}
+          onClick={handleClick}
           className={"button"
             + (' ' + props.className)
             + (' ' + (props.variant ?? ' primary'))
             + (props.disabled ? ' disabled' : '')
           }
         >
-            {props.icon}
+            <div className="button__icon">
+              {!props.loading && props.iconPosition !== 'right' && props.icon}
+            </div>
             <input
                 value={props.loading ? '' : props.text}
                 type='button'
                 disabled={props.loading || props.disabled}
             />
+            {!props.loading && props.iconPosition === 'right' && props.icon}
             {props.loading &&
               <div className='button__loader'>
                 <BubbleLoader color="inherit"/>
