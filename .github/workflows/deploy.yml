@@ -33,16 +33,6 @@ jobs:
           cd ..
           cd back && npm run build
 
-      - name: "Create a backup"
-        if: success()
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_REMOTE_HOST }}
-          username: ${{ secrets.SSH_REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            
-
       - name: "Deploy the app"
         if: success()
         uses: easingthemes/ssh-deploy@v5.1.0
