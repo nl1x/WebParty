@@ -40,7 +40,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SOURCE: "."
           TARGET: "~/app"
-          ARGS: "-rltgoDzO --delete --verbose --exclude=.env"
+          ARGS: "-rltgoDzO --delete --verbose --exclude=.env --exclude=front/node_modules"
           SCRIPT_BEFORE: |
             mkdir -p ${{ secrets.BACKUP_DIR }} && cd /var/www/html && tar -cvf ${{ secrets.BACKUP_DIR }}/backup.tar *
           SCRIPT_AFTER: |
