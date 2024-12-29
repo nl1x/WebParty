@@ -27,7 +27,6 @@ jobs:
         if: success()
         env:
           VITE_HOST_API: ${{ secrets.VITE_HOST_API }}
-          VITE_ENVIRONMENT: 'production'
         run: |
           cd front && npm run build && chmod -R +rw dist/
 
