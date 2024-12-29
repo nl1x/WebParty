@@ -20,15 +20,27 @@ jobs:
           node-version: '22'  # Remplacez par la version Node.js souhaitée
 
       - name: "Install dependencies"
-
         run: |
           cd back && npm install && cd ..
           cd front && npm install
 
       - name: "Build the application"
+        if: success()
+        env:
+          VITE_HOST_API: ${{ secrets.VITE_HOST_API }}
         run: |
           cd back && npm run build && cd ..
           cd front && npm run build
+
+      - name: "Create a backup"
+        if: success()
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_REMOTE_HOST }}
+          username: ${{ secrets.SSH_REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/html && tar -cvf ${{ secrets.BACKUP_DIR }} *
 
       - name: "Deploy the app"
         if: success()
@@ -38,4 +50,5 @@ jobs:
           REMOTE_USER: ${{ secrets.SSH_REMOTE_USER }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SOURCE: "./"
-          TARGET: "~/app"
+          TARGET: "/var/www/html/"
+          ARGS: "-rltgoDzO --delete --verbose --exclude=.env"
