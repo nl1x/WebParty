@@ -39,7 +39,9 @@ const DEFAULT = {
     BCRYPT_SALT: parseInt(process.env.BCRYPT_SALT ?? '10'),
     JWT_SECRET: process.env.JWT_SECRET ?? 'th15_iS_Th3_d3Faù1t_S3c4eT_!',
     ENVIRONMENT: process.env.ENVIRONMENT ?? 'development',
-    UPLOAD_DIR: process.env.UPLOAD_DIR ?? '/tmp/'
+    UPLOAD_DIR: process.env.UPLOAD_DIR ?? '/tmp/',
+    ADMIN_USERNAME: process.env.ADMIN_USERNAME ?? 'admin',
+    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD ?? 'admin'
 }
 
 enum SEQUELIZE_ERRORS {
