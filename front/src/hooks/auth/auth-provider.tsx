@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import { useMemo } from 'react';
 import { createContext } from 'react';
 import { useContext } from 'react';
@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import getMe from "@api/user.ts";
 import useNavigatorContext from "@hooks/navigator/navigator-provider.tsx";
 import {PATH} from "@path/path.tsx";
+import {UserProfileProps} from "@api/objects.ts";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -17,37 +18,8 @@ interface AuthContextType {
   profile: UserProfileProps|null;
   updateUserProfile: () => Promise<true | false>;
   isLoggedIn: () => boolean;
-}
-
-
-export interface RoleProps {
-    name: string;
-    displayName: string;
-    weight: number;
-}
-
-export interface ActionProps {
-    id: number;
-    proofPicture: string;
-    status: string;
-    action: {
-        description: string;
-        difficulty: number;
-        requireProof: boolean;
-    };
-}
-
-export interface UserProfileProps {
-    me: {
-        id: number;
-        username: string;
-        avatarUrl: string;
-        createdAt: string;
-        updatedAt: string;
-        role: RoleProps;
-        history: ActionProps[];
-        action?: ActionProps;
-    }
+  isPendingForApproval: boolean;
+  hasAction: boolean;
 }
 
 const AuthContext = createContext<AuthContextType|undefined>(undefined);
@@ -55,6 +27,8 @@ const AuthContext = createContext<AuthContextType|undefined>(undefined);
 export function AuthProvider(props: AuthProviderProps) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState<UserProfileProps|any|null>(null);
+  const [isPendingForApproval, setIsPendingForApproval] = useState<boolean>(true);
+  const [hasAction, setHasAction] = useState<boolean>(true);
   const {navigate} = useNavigatorContext();
 
   const isLoggedIn = useCallback(() => {
@@ -72,6 +46,9 @@ export function AuthProvider(props: AuthProviderProps) {
         return false;
       }
 
+      const timestamp = new Date().getTime();
+      response.data.me.avatarUrl += `?t=${timestamp}`;
+
       setProfile(response.data);
       return true;
     } catch (error) {
@@ -79,15 +56,36 @@ export function AuthProvider(props: AuthProviderProps) {
     }
   }, []);
 
+  useEffect(() => {
+    if (!isLoggedIn())
+      return;
+
+    updateUserProfile()
+      .then((success) => {
+        if (!success)
+          return navigate(PATH.LOGIN);
+      })
+      .catch((error) => console.error(error));
+  }, [navigate]);
+
+  useEffect(() => {
+    if (profile) {
+      setHasAction(profile.me.action !== null);
+      setIsPendingForApproval(profile.me.action?.status === 'pending-approval');
+    }
+  }, [profile])
+
   const memoValue = useMemo(
     () => ({
       user,
       setUser,
       profile,
       updateUserProfile,
-      isLoggedIn,
+      isPendingForApproval,
+      hasAction,
+      isLoggedIn
     }),
-    [user, setUser, profile, updateUserProfile, isLoggedIn]
+    [user, setUser, profile, updateUserProfile, isPendingForApproval, isLoggedIn]
   );
 
   return <AuthContext.Provider value={memoValue}>{props.children}</AuthContext.Provider>;
