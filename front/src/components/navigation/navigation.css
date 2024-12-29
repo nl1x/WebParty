@@ -1,0 +1,47 @@
+nav.navigation {
+
+    position: absolute;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    top: 20px;
+    left: 5svw;
+    width: 90svw;
+
+    .navigation__primary-button {
+        margin: 15px 0;
+
+        > input {
+            font-size: 0.9em;
+        }
+    }
+
+    .navigation__icon-buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+        align-items: center;
+
+        .navigation__profile-picture > img {
+            border-radius: 100%;
+            width: 42px;
+            height: 42px;
+        }
+
+        > *:not(.navigation__profile-picture) {
+            padding: 10px;
+        }
+
+        > *:nth-last-child(2) {
+            padding-right: 15px;
+        }
+
+        > *:nth-last-child(3) {
+            padding-left: 15px;
+        }
+    }
+
+}

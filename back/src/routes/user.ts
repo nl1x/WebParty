@@ -10,7 +10,7 @@ import resetUserActions from "@controllers/user/reset";
 
 const userRouter = Router();
 
-userRouter.get('/', getUsers);
+userRouter.get('/', checkAuthentication, getUsers);
 userRouter.get('/me', checkAuthentication, getMe);
 userRouter.get('/:id', getUser);
 userRouter.patch('/', checkAuthentication, file('avatar', 'uploads/avatars/'), updateUser);

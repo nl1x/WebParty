@@ -39,7 +39,8 @@ export async function initializeDatabase() {
 
     UserAction.belongsTo(User, {
         foreignKey: 'userId',
-        targetKey: 'id'
+        targetKey: 'id',
+        as: 'user'
     });
 
     Action.hasMany(UserAction, {

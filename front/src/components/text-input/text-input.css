@@ -1,0 +1,51 @@
+
+.text-input {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    border: 1px solid white;
+    border-radius: 5px;
+
+    &.text-input__variant-error {
+        border-color: #b60909;
+    }
+
+    &.text-input__disabled {
+        opacity: 0.4;
+    }
+
+    input {
+        background-color: transparent;
+        border: none;
+
+        &:not(.text-input__has-icon) {
+            padding: 15px;
+        }
+
+        &.text-input__has-left-icon {
+            padding-left: 2px;
+        }
+
+        color: white;
+        font-size: small;
+        font-weight: 400;
+
+        width: 100%;
+        box-sizing: border-box;
+
+        &:focus {
+            outline: none;
+            border: none;
+        }
+    }
+
+    .text-input__icon {
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+        height: auto;
+        padding: 10px;
+    }
+
+}

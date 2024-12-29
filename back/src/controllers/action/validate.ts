@@ -110,6 +110,7 @@ export async function validateAction(req: Request, res: Response)
         currentAction.status = ACTION_STATUS.DONE;
     }
 
+    authReq.user.score += currentAction.action ? currentAction.action.difficulty : 0;
     authReq.user.currentActionIndex++;
 
     try {
@@ -132,7 +133,14 @@ export async function approveAction(req: Request, res: Response)
     let userAction = null;
 
     try {
-        userAction = await UserAction.findByPk(parsedUserActionId);
+        userAction = await UserAction.findByPk(parsedUserActionId,
+            {
+                include: [{
+                    model: Action,
+                    as: 'action'
+                }]
+            }
+        );
     } catch (error) {
         return handleRequestError(res, error);
     }
@@ -151,7 +159,7 @@ export async function approveAction(req: Request, res: Response)
         ));
     }
 
-    userAction.status = isApproved ? ACTION_STATUS.DONE : ACTION_STATUS.NOT_DONE;
+    userAction.status = isApproved ? ACTION_STATUS.DONE : ACTION_STATUS.WAITING;
 
     let user = null;
 
@@ -168,11 +176,19 @@ export async function approveAction(req: Request, res: Response)
         ));
     }
 
-    user.currentActionIndex++;
+    if (userAction.status === ACTION_STATUS.DONE) {
+        user.score += userAction.action ? userAction.action?.difficulty : 0;
+        user.currentActionIndex++;
+
+        try {
+            await user.save();
+        } catch (error) {
+            return handleRequestError(res, error);
+        }
+    }
 
     try {
         await userAction.save();
-        await user.save();
     } catch (error) {
         return handleRequestError(res, error);
     }

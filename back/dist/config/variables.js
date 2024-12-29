@@ -12,6 +12,7 @@ var CODE_STATUS;
 })(CODE_STATUS || (exports.CODE_STATUS = CODE_STATUS = {}));
 const AUTHORIZED_FILE_TYPES = {
     IMAGES: [
+        "image/webp",
         "image/png",
         "image/jpg",
         "image/jpeg"

@@ -127,6 +127,7 @@ function validateAction(req, res) {
         else {
             currentAction.status = variables_1.ACTION_STATUS.DONE;
         }
+        authReq.user.score += currentAction.action ? currentAction.action.difficulty : 0;
         authReq.user.currentActionIndex++;
         try {
             yield currentAction.save();
@@ -142,12 +143,18 @@ function validateAction(req, res) {
 }
 function approveAction(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        var _a;
         const { id: userActionId } = req.params;
         const { isApproved } = req.body;
         const parsedUserActionId = parseInt(userActionId, 10);
         let userAction = null;
         try {
-            userAction = yield user_action_1.default.findByPk(parsedUserActionId);
+            userAction = yield user_action_1.default.findByPk(parsedUserActionId, {
+                include: [{
+                        model: action_1.default,
+                        as: 'action'
+                    }]
+            });
         }
         catch (error) {
             return (0, sequelize_1.default)(res, error);
@@ -158,7 +165,7 @@ function approveAction(req, res) {
         if (userAction.status !== variables_1.ACTION_STATUS.PENDING_APPROVAL) {
             return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.BAD_PARAMETER, "This action is not pending for approval."));
         }
-        userAction.status = isApproved ? variables_1.ACTION_STATUS.DONE : variables_1.ACTION_STATUS.NOT_DONE;
+        userAction.status = isApproved ? variables_1.ACTION_STATUS.DONE : variables_1.ACTION_STATUS.WAITING;
         let user = null;
         try {
             user = yield user_1.default.findByPk(userAction.userId);
@@ -169,10 +176,18 @@ function approveAction(req, res) {
         if (!user) {
             return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.ACTION_NOT_FOUND, "This user action does not exist."));
         }
-        user.currentActionIndex++;
+        if (userAction.status === variables_1.ACTION_STATUS.DONE) {
+            user.score += userAction.action ? (_a = userAction.action) === null || _a === void 0 ? void 0 : _a.difficulty : 0;
+            user.currentActionIndex++;
+            try {
+                yield user.save();
+            }
+            catch (error) {
+                return (0, sequelize_1.default)(res, error);
+            }
+        }
         try {
             yield userAction.save();
-            yield user.save();
         }
         catch (error) {
             return (0, sequelize_1.default)(res, error);

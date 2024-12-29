@@ -13,6 +13,7 @@ class User extends Model {
     declare username: string;
     declare avatarUrl: string;
     declare roleName: string;
+    declare score: number;
     declare private actionsId: string; // A json string to parse
     declare currentActionIndex: number;
     declare action?: UserAction|null;
@@ -89,6 +90,7 @@ class User extends Model {
             await userAction.save();
         }
         this.currentActionIndex = 0;
+        this.score = 0;
 
         await this.save();
     }
@@ -158,6 +160,10 @@ export async function initUserModel(database: Sequelize) {
                     model: Role,
                     key: 'name'
                 },
+            },
+            score: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0
             },
             actionsId: {
                 type: DataTypes.STRING,

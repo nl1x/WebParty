@@ -72,7 +72,8 @@ function initializeDatabase() {
         });
         user_action_1.default.belongsTo(user_1.default, {
             foreignKey: 'userId',
-            targetKey: 'id'
+            targetKey: 'id',
+            as: 'user'
         });
         action_1.default.hasMany(user_action_1.default, {
             foreignKey: 'actionId',

@@ -13,7 +13,7 @@ const variables_1 = require("@config/variables");
 const has_role_1 = require("@middlewares/has-role");
 const reset_1 = __importDefault(require("@controllers/user/reset"));
 const userRouter = (0, express_1.Router)();
-userRouter.get('/', fetch_1.getUsers);
+userRouter.get('/', check_authentication_1.default, fetch_1.getUsers);
 userRouter.get('/me', check_authentication_1.default, fetch_1.getMe);
 userRouter.get('/:id', fetch_1.getUser);
 userRouter.patch('/', check_authentication_1.default, (0, upload_picture_1.file)('avatar', 'uploads/avatars/'), update_1.default);
