@@ -1,5 +1,16 @@
 nav.navigation {
 
+    position: absolute;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    top: 20px;
+    left: 5svw;
+    width: 90svw;
+
     .navigation__primary-button {
         margin: 15px 0;
 
