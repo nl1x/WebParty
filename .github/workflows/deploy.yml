@@ -42,7 +42,7 @@ jobs:
           TARGET: "~/app"
           ARGS: "-rltgoDzO --delete --verbose --exclude=.env"
           SCRIPT_BEFORE: |
-            mkdir -p ${{ secrets.BACKUP_DIR }} && cd /var/www/html && tar -cvf ${{ secrets.BACKUP_DIR }} *
+            mkdir -p ${{ secrets.BACKUP_DIR }} && cd /var/www/html && tar -cvf ${{ secrets.BACKUP_DIR }}/backup.tar *
           SCRIPT_AFTER: |
             mv ~/app/front/dist /var/www/html
             cd back && docker compose up -d
