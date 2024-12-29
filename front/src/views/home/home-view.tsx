@@ -29,6 +29,8 @@ export default function HomeView()
   const { navigate } = useNavigatorContext();
   const { profile, isPendingForApproval, hasAction, updateUserProfile } = useAuthContext();
 
+  console.log("In home view");
+
   useEffect(() => {
     if (profile) {
       if (hasAction) {
