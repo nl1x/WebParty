@@ -14,21 +14,21 @@ jobs:
       - name: "Fetch the repository"
         uses: actions/checkout@v4
 
-      - name: "Set up Node.js"
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22'  # Remplacez par la version Node.js souhaitée
+#      - name: "Set up Node.js"
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version: '22'  # Remplacez par la version Node.js souhaitée
 
-      - name: "Install dependencies"
-        run: |
-          cd front && npm install
+#      - name: "Install dependencies"
+#        run: |
+#          cd front && npm install
 
-      - name: "Build the application"
-        if: success()
-        env:
-          VITE_HOST_API: ${{ secrets.VITE_HOST_API }}
-        run: |
-          cd front && npm run build && chmod -R +rw dist/
+#      - name: "Build the application"
+#        if: success()
+#        env:
+#          VITE_HOST_API: ${{ secrets.VITE_HOST_API }}
+#        run: |
+#          cd front && npm run build && chmod -R +rw dist/
 
       - name: "Deploy the app"
         if: success()
@@ -40,10 +40,7 @@ jobs:
           SOURCE: "."
           TARGET: "~/app"
           ARGS: "-rltgoDzO --delete --verbose --exclude=.env --exclude=**/node_modules"
-          SCRIPT_BEFORE: |
-            mkdir -p ${{ secrets.BACKUP_DIR }} && cd /var/www/html && tar -cvf ${{ secrets.BACKUP_DIR }}/backup.tar *
+#          SCRIPT_BEFORE: |
+#            mkdir -p ${{ secrets.BACKUP_DIR }} && cd /var/www/html && tar -cvf ${{ secrets.BACKUP_DIR }}/backup.tar *
           SCRIPT_AFTER: |
-            chmod +x ~/app/front/dist 
-            rm -rf /var/www/html/dist
-            mv ~/app/front/dist /var/www/html
-            cd ~/app/back && sudo /usr/local/bin/manage-app.sh restart
+            sudo /usr/local/bin/manage-app.sh restart
