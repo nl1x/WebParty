@@ -3,13 +3,38 @@
     width: 90svw;
     height: 95svh;
 
+    position: relative;
+
+    z-index: 2;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
+    .camera-view__navigation {
+        position: absolute;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+
+        top: 0;
+        width: 90svw;
+
+        .camera-view__navigate-backward {;
+            width: fit-content;
+        }
+
+    }
+
+    .camera-view__validate-title {
+        margin: 20px;
+    }
+
     .camera-view__card {
-        width: 100%;
+        width: fit-content;
         height: fit-content;
         display: flex;
         justify-content: center;
@@ -18,12 +43,32 @@
         margin: 0;
     }
 
-
     .camera-view__controller {
 
         display: flex;
         flex-direction: row;
         justify-content: center;
+
+        &.camera-view__validation {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+
+            > * {
+                width: 100%;
+                margin-top: 5px;
+            }
+
+            > :first-child {
+                margin-right: 2px;
+            }
+
+            > :last-child {
+                margin-left: 2px;
+            }
+        }
 
         .camera-view__capture-button, .camera-view__flip-button {
             display: flex;

@@ -9,31 +9,6 @@
     width: 90svw;
     height: 95svh;
 
-    .home-view__navigation {
-
-        position: absolute;
-
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-
-        top: 20px;
-        left: 5svw;
-        width: 90svw;
-
-        .home-view__navigation__rank-button {;
-            width: fit-content;
-            padding: 5px 20px;
-
-            .home-view__navigation__rank-button-icon {
-                font-size: 120%;
-                color: yellow;
-                padding-right: 5px;
-            }
-        }
-    }
-
     .home-view__title {
         margin-bottom: 20px;
         text-align: center;

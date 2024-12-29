@@ -1,0 +1,16 @@
+.not-found-view {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-self: center;
+    align-items: center;
+
+    width: 90svw;
+    height: 95svh;
+
+    > h1 {
+       margin: 15px;
+    }
+
+}

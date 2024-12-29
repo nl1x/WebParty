@@ -1,0 +1,117 @@
+.admin-view {
+
+    width: 90svw;
+    height: 100svh;
+
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .admin-view__no-action {
+        position: absolute;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.2em;
+        width: 100%;
+
+        top: 50%;
+        right: 50%;
+        transform: translate(50%, -50%);
+    }
+
+    .admin-view__actions {
+
+        margin-top: 100px;
+
+        .admin-view__actions-title {
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .admin-view__actions-list {
+
+            max-height: 80svh;
+            overflow: scroll;
+            padding-top: 12%;
+
+            mask-image: linear-gradient(to bottom, transparent, black 10%, black 100%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 100%, transparent);
+
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+
+            &::-webkit-scrollbar {
+                display: none; /* Safari and Chrome */
+            }
+
+            .admin-view__action {
+                width: 100%;
+                margin-bottom: 20px;
+
+                .admin-view__action-card {
+
+                    background-color: rgba(0, 0, 0, 0.4);
+
+                    .admin-view__action-header {
+
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: flex-start;
+                        align-items: center;
+                        gap: 20px;
+                        margin-bottom: 20px;
+
+                        .admin-view__action-author-profile {
+
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 10px;
+
+                            text-transform: uppercase;
+                            font-weight: 600;
+
+                            .admin-view__action-author-picture {
+                                border-radius: 100%;
+                                width: 64px;
+                                height: 64px;
+                                object-fit: cover;
+                            }
+                        }
+
+                        .admin-view__action-description {
+                            flex: 2;
+                            text-align: center;
+                        }
+
+                    }
+
+                    .admin-view__action-proof-image {
+                        object-fit: cover;
+                        width: 100%;
+                        border-radius: 10px;
+                    }
+                }
+
+                .admin-view__action-controller {
+                    display: flex;
+                    flex-direction: row;
+                    width: 100%;
+                    gap: 5px;
+                    margin-top: 5px;
+
+                    > * {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+}

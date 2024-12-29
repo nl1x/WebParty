@@ -11,60 +11,45 @@ import SentimentVeryDissatisfiedRoundedIcon from '@mui/icons-material/SentimentV
 import LocalFireDepartmentRoundedIcon from '@mui/icons-material/LocalFireDepartmentRounded';
 import MilitaryTechRoundedIcon from '@mui/icons-material/MilitaryTechRounded';
 import ChecklistRoundedIcon from '@mui/icons-material/ChecklistRounded';
-import IconButton from "@components/icon-button/icon-button.tsx";
+import RemoveRedEyeRoundedIcon from '@mui/icons-material/RemoveRedEyeRounded';
+import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded';
+
 import {PATH} from "@path/path.tsx";
 import {validateCurrentAction} from "@api/action.ts";
 import useAuthContext from "@hooks/auth/auth-provider.tsx";
+import Navigation, {
+  NavigationIconButtonsProps
+} from "@components/navigation/navigation.tsx";
 
 export default function HomeView()
 {
   const [loading, setLoading] = useState<boolean>(true);
-  const [hasAction, setHasAction] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
   const [difficultyColor, setDifficultyColor] = useState<'success'|'warning'|'error'>('success');
-  const [isPendingForApproval, setIsPendingForApproval] = useState<boolean>(true);
   const { navigate } = useNavigatorContext();
-  const { profile, updateUserProfile } = useAuthContext();
-
-  useEffect(() => {
-    updateUserProfile()
-      .then((success) => {
-        if (!success)
-          return navigate(PATH.LOGIN);
-      })
-      .catch((error) => console.error(error));
-  }, []);
+  const { profile, isPendingForApproval, hasAction, updateUserProfile } = useAuthContext();
 
   useEffect(() => {
     if (profile) {
-      setHasAction(profile.me.action !== null);
-      setIsPendingForApproval(profile.me.action?.status === 'pending-approval');
-
-      switch (profile.me.action?.action.difficulty) {
-        case 2:
-          setDifficultyColor('warning');
-          break;
-        case 3:
-          setDifficultyColor('error');
-          break;
-        default:
-          setDifficultyColor('success');
-          break;
+      if (hasAction) {
+        switch (profile.me.action?.action.difficulty) {
+          case 2:
+            setDifficultyColor('warning');
+            break;
+          case 3:
+            setDifficultyColor('error');
+            break;
+          default:
+            setDifficultyColor('success');
+            break;
+        }
       }
 
       setLoading(false);
     }
   }, [profile]);
 
-  const handleRankButton = () => {
-    navigate('/rank');
-  }
-
-  const handleHistoryButton = () => {
-    navigate('/history');
-  }
-
-  const handleAbleButton = async () => {
+  const handleAbleSeeButton = async () => {
     if (profile?.me.action?.action.requireProof) {
       navigate(PATH.CAMERA);
       return;
@@ -93,64 +78,71 @@ export default function HomeView()
     await updateUserProfile();
   }
 
+  const navigationIconButtons: NavigationIconButtonsProps[] = [
+    {
+      icon: <ChecklistRoundedIcon/>,
+      redirect: PATH.HISTORY
+    }
+  ];
+
+  if (profile && profile.me.role.weight > 0) {
+    navigationIconButtons.push({
+      icon: <AdminPanelSettingsRoundedIcon/>,
+      redirect: PATH.ADMIN
+    });
+  }
+
   return (
     loading && <BubbleLoader color='white' />
     ||
     <div className="home-view">
-      <nav className="home-view__navigation">
-        <Button
-          className="home-view__navigation__rank-button"
-          text="Classement"
-          onClick={handleRankButton}
-          variant="header"
-          icon={<MilitaryTechRoundedIcon className="home-view__navigation__rank-button-icon" />}
-        />
-        <IconButton
-          className="home-view__navigation__history-button"
-          onClick={handleHistoryButton}
-          icon={<ChecklistRoundedIcon/>}
-        />
-      </nav>
+      <Navigation
+        text="Classement"
+        icon={<MilitaryTechRoundedIcon />}
+        redirect={PATH.RANK}
+        iconButtons={navigationIconButtons.reverse()}
+      />
       <div className="home-view__title">
         <h1>Nouvel an 2025 🎉</h1>
         <h4>{profile?.me?.username}</h4>
       </div>
-        <Card className={"home-view__action-card " + (error ? 'home-view__action-card-error' : '')}>
-          <div className="home-view__action-difficulty">
-          {hasAction &&
-            Array(profile?.me.action?.action.difficulty).fill(0).map((_, index) => (
-              <LocalFireDepartmentRoundedIcon fontSize="large" key={index} color={difficultyColor}/>
-            ))
-          }
-          </div>
-          <p>{hasAction
-            && profile?.me.action?.action.description
-            || "Félicitation ! Tu as terminé toutes tes actions ! 🥳"
-          }</p>
-          {isPendingForApproval &&
-            <p className="home-view__action-status">En attente d'approbation...</p>
-          }
-        </Card>
-        <div className="home-view__cta-buttons">
-          <Button
-            variant="secondary"
-            className="home-view__validate-button"
-            onClick={handleNotAbleButton}
-            text={"Pas cap..."}
-            icon={<SentimentVeryDissatisfiedRoundedIcon/>}
-            disabled={isPendingForApproval || !hasAction}
-          />
-          <Button
-            className="home-view__validate-button"
-            onClick={handleAbleButton}
-            text={"Cap !"}
-            icon={profile?.me?.action?.action?.requireProof
-              ? <CameraAltRoundedIcon/>
-              : <SentimentVerySatisfiedRoundedIcon/>
-            }
-            disabled={isPendingForApproval || !hasAction}
-          />
+      <Card className={"home-view__action-card " + (error ? 'home-view__action-card-error' : '')}>
+        <div className="home-view__action-difficulty">
+        {hasAction &&
+          Array(profile?.me.action?.action.difficulty).fill(0).map((_, index) => (
+            <LocalFireDepartmentRoundedIcon fontSize="large" key={index} color={difficultyColor}/>
+          ))
+        }
         </div>
+        <p>{hasAction && profile?.me.action?.action.description
+          || "Félicitation ! Tu as terminé toutes tes actions ! 🥳"
+        }</p>
+        {isPendingForApproval &&
+          <p className="home-view__action-status">En attente d'approbation...</p>
+        }
+      </Card>
+      <div className="home-view__cta-buttons">
+        <Button
+          variant="secondary"
+          className="home-view__validate-button"
+          onClick={handleNotAbleButton}
+          text={"Pas cap..."}
+          icon={<SentimentVeryDissatisfiedRoundedIcon/>}
+          disabled={isPendingForApproval || !hasAction}
+        />
+        <Button
+          className="home-view__validate-button"
+          onClick={handleAbleSeeButton}
+          text={isPendingForApproval && "Voir" || "Cap !"}
+          icon={profile?.me?.action?.action?.requireProof
+            ? (isPendingForApproval
+              && <RemoveRedEyeRoundedIcon/>
+              || <CameraAltRoundedIcon/>)
+            : <SentimentVerySatisfiedRoundedIcon/>
+          }
+          disabled={!hasAction}
+        />
       </div>
+    </div>
   )
 }

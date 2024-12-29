@@ -1,0 +1,41 @@
+.account-view {
+
+    width: min(80svw, 400px);
+    height: 95svh;
+
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .account-view__account {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+
+        .account-view__account-avatar > img {
+            width: 128px;
+            height: 128px;
+            border-radius: 100%;
+            object-fit: cover;
+        }
+
+        .account-view__account-name {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .account-view__change-password__password,
+        .account-view__change-password__confirm,
+        .account-view__account-save-button {
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+    }
+
+}

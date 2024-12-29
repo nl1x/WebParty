@@ -1,0 +1,97 @@
+.history-view {
+
+    width: 90svw;
+    height: 100svh;
+
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .history-view__no-action {
+        position: absolute;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.2em;
+        width: 100%;
+
+        top: 50%;
+        right: 50%;
+        transform: translate(50%, -50%);
+    }
+
+    .history-view__actions {
+
+        margin-top: 100px;
+        width: 100%;
+
+        .history-view__actions-title {
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .history-view__actions-list {
+
+            max-height: 80svh;
+            overflow: scroll;
+            padding-top: 12%;
+
+            mask-image: linear-gradient(to bottom, transparent, black 10%, black 100%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 100%, transparent);
+
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+
+            &::-webkit-scrollbar {
+                display: none; /* Safari and Chrome */
+            }
+
+            .history-view__action {
+                width: 100%;
+                margin-bottom: 20px;
+
+                .history-view__action-card {
+                    position: relative;
+                    background-color: rgba(255, 255, 255, 0.2);
+                    padding-bottom: 5px;
+
+                    .history-view__action-difficulty {
+                        position: absolute;
+                        top: 5px;
+                        right: 5px;
+                        > * {
+                            width: 25px;
+                        }
+                    }
+
+                    .history-view__action-status {
+                        text-align: center;
+                        font-style: italic;
+                        font-size: 0.8em;
+                        font-weight: 400;
+                        margin-top: 10px;
+                    }
+
+                    .history-view__action-description {
+                        text-align: center;
+                        width: 100%;
+                    }
+
+                    .history-view__action-proof-image {
+                        object-fit: cover;
+                        width: 100%;
+                        border-radius: 10px;
+                        margin-top: 10px;
+                    }
+                }
+
+            }
+        }
+    }
+}
