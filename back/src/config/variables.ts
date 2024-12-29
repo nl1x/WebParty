@@ -9,6 +9,7 @@ enum CODE_STATUS {
 
 const AUTHORIZED_FILE_TYPES = {
     IMAGES: [
+        "image/webp",
         "image/png",
         "image/jpg",
         "image/jpeg"
