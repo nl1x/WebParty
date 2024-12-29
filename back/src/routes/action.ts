@@ -9,6 +9,7 @@ import {hasPermissionsOf, hasRole} from "@middlewares/has-role";
 import {ROLE} from "@config/variables";
 import assignActions from "@controllers/action/assign";
 import createAction from "@controllers/action/create";
+import {getPendingApprovalActions} from "@controllers/action/fetch";
 
 const actionRouter = Router();
 
@@ -17,5 +18,6 @@ actionRouter.post('/assign-all', checkAuthentication, hasRole(ROLE.ADMIN), assig
 actionRouter.patch('/edit/:id', checkAuthentication, hasRole(ROLE.ADMIN), file('proofPicture', 'uploads/actions/'), changeActionStatus);
 actionRouter.patch('/validate-current', checkAuthentication, file('proofPicture', 'uploads/actions/'), validateAction);
 actionRouter.post('/:id/approve-action', checkAuthentication, hasPermissionsOf(ROLE.ORGANISER), approveAction);
+actionRouter.get('/pending-approval', checkAuthentication, hasPermissionsOf(ROLE.ORGANISER), getPendingApprovalActions);
 
 export default actionRouter;
