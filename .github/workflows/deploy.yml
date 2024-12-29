@@ -41,3 +41,9 @@ jobs:
           SOURCE: "."
           TARGET: "~/app"
           ARGS: "-rltgoDzO --delete --verbose --exclude=.env --exclude=**/node_modules"
+          SCRIPT_BEFORE: |
+            mkdir -p ${{ secrets.BACKUP_DIR }} && cd /var/www/html && tar -cvf ${{ secrets.BACKUP_DIR }}/backup.tar *
+          SCRIPT_AFTER: |
+            chmod +x ~/app/front/dist 
+            mv ~/app/front/dist /var/www/html
+            cd back && docker compose up -d
