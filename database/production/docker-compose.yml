@@ -4,7 +4,7 @@ services:
     container_name: mysql_database
     restart: always
     env_file:
-      - ../back/.env
+      - .env
     ports:
       - "3306:3306"
     volumes:
@@ -12,18 +12,18 @@ services:
     networks:
       - network
 
-  phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: phpmyadmin_dashboard
-    restart: always
-    depends_on:
-      - db
-    env_file:
-      - ../back/.env
-    ports:
-      - "8080:80"
-    networks:
-      - network
+#  phpmyadmin:
+#    image: phpmyadmin:latest
+#    container_name: phpmyadmin_dashboard
+#    restart: always
+#    depends_on:
+#      - db
+#    env_file:
+#      - ../back/.env
+#    ports:
+#      - "8080:80"
+#    networks:
+#      - network
 
 volumes:
   db_data:

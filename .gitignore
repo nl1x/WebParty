@@ -2,3 +2,5 @@
 ## Main gitignore file ##
 #########################
 .idea/
+**/.env
+**/dist/
