@@ -3,4 +3,9 @@ export enum PATH {
   LOGIN="/login",
   CAMERA="/camera",
   LOGOUT="/logout",
+  RANK="/rank",
+  HISTORY="/history",
+  ACCOUNT="/account",
+  ADMIN="/admin",
+  NOT_FOUND="/404",
 }
