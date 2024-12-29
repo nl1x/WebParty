@@ -47,4 +47,4 @@ jobs:
             chmod +x ~/app/front/dist 
             rm -rf /var/www/html/dist
             mv ~/app/front/dist /var/www/html
-            cd /app/back && sudo /usr/local/bin/manage-app.sh restart
+            cd ~/app/back && sudo /usr/local/bin/manage-app.sh restart
