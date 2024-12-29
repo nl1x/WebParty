@@ -50,7 +50,7 @@ function getUsers(req, res) {
         let users = null;
         try {
             users = yield user_1.default.findAll({
-                attributes: { exclude: ['password'] },
+                attributes: ['username', 'avatarUrl', 'score'],
                 include: [
                     {
                         model: role_1.default,
@@ -65,14 +65,14 @@ function getUsers(req, res) {
         if (!users) {
             return (0, sequelize_1.default)(res, new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.USER_NOT_FOUND, "No user have been found."));
         }
-        let action = null;
+        // let action = null;
         // TODO: Partie du code à revoir
-        for (const user of users) {
-            action = yield user.getCurrentAction();
-            user.dataValues.action = action;
-            delete user.dataValues.actionsId;
-            delete user.dataValues.currentActionIndex;
-        }
+        // for (const user of users) {
+        //     action = await user.getCurrentAction();
+        //     user.dataValues.action = action;
+        //     delete user.dataValues.actionsId;
+        //     delete user.dataValues.currentActionIndex;
+        // }
         res.status(variables_1.CODE_STATUS.SUCCESS).json({
             "users": users
         });

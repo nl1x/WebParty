@@ -78,6 +78,7 @@ class User extends sequelize_1.Model {
                 yield userAction.save();
             }
             this.currentActionIndex = 0;
+            this.score = 0;
             yield this.save();
         });
     }
@@ -137,6 +138,10 @@ function initUserModel(database) {
                     model: role_1.default,
                     key: 'name'
                 },
+            },
+            score: {
+                type: sequelize_1.DataTypes.INTEGER,
+                defaultValue: 0
             },
             actionsId: {
                 type: sequelize_1.DataTypes.STRING,

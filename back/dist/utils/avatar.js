@@ -93,6 +93,7 @@ function deleteFile(file) {
     });
 }
 function checkFileAsImage(avatar, res) {
+    console.log(avatar.mimetype);
     if (!variables_1.AUTHORIZED_FILE_TYPES.IMAGES.includes(avatar.mimetype)) {
         return new custom_error_1.default(custom_error_1.CUSTOM_ERROR_TYPE.AVATAR_INCORRECT_FILE_TYPE, "Incorrect avatar file type.");
     }
