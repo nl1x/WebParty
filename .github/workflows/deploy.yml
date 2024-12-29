@@ -29,9 +29,7 @@ jobs:
         env:
           VITE_HOST_API: ${{ secrets.VITE_HOST_API }}
         run: |
-          cd front && npm run build
-          cd ..
-          cd back && npm run build
+          cd front && npm run build && cd ../back && npm run build
 
       - name: "Deploy the app"
         if: success()
@@ -44,7 +42,7 @@ jobs:
           TARGET: "~/app"
           ARGS: "-rltgoDzO --delete --verbose --exclude=.env"
           SCRIPT_BEFORE: |
-            cd /var/www/html && tar -cvf ${{ secrets.BACKUP_DIR }} *
+            mkdir -p ${{ secrets.BACKUP_DIR }} && cd /var/www/html && tar -cvf ${{ secrets.BACKUP_DIR }} *
           SCRIPT_AFTER: |
             mv ~/app/front/dist /var/www/html
             cd back && docker compose up -d
