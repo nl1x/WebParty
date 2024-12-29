@@ -1,14 +1,8 @@
 import axiosModule, {AxiosInstance} from 'axios';
-import { HOST_API, ENVIRONMENT } from '@config/globlal';
+import { HOST_API } from '@config/globlal';
 
-let axiosInstance: AxiosInstance;
-
-if (ENVIRONMENT !== 'production') {
-    axiosInstance = axiosModule.create({
-        baseURL: HOST_API
-    });
-} else {
-    axiosInstance = axiosModule.create();
-}
+let axiosInstance: AxiosInstance = axiosModule.create({
+    baseURL: HOST_API
+});
 
 export default axiosInstance;
