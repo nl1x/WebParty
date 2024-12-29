@@ -25,6 +25,8 @@ export default function LoginView()
     const [error, setError] = useState(false);
     const { navigate } = useNavigatorContext();
 
+    console.log("In login view");
+
     useEffect(() => {
       if (isLoggedIn()) {
         navigate(PATH.HOME);
