@@ -1,0 +1,10 @@
+# Node
+node_modules/
+
+# Other
+.env
+
+uploads/actions/*
+
+uploads/avatars/*
+!uploads/avatars/placeholder.png

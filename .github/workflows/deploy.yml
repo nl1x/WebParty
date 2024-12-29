@@ -1,0 +1,41 @@
+name: Déploiement du site
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: "Déploiement"
+    runs-on: ubuntu-latest
+    env:
+      VITE_HOST_API: ${{ secrets.VITE_HOST_API }}
+    steps:
+      - name: "Fetch the repository"
+        uses: actions/checkout@v4
+
+      - name: "Set up Node.js"
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'  # Remplacez par la version Node.js souhaitée
+
+      - name: "Install dependencies"
+
+        run: |
+          cd back && npm install && cd ..
+          cd front && npm install
+
+      - name: "Build the application"
+        run: |
+          cd back && npm run build && cd ..
+          cd front && npm run build
+
+      - name: "Deploy the app"
+        if: success()
+        uses: easingthemes/ssh-deploy@v2.1.4
+        with:
+          REMOTE_HOST: ${{ secrets.SSH_REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_REMOTE_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SOURCE: "./"
+          TARGET: "~/app"

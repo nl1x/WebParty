@@ -1,0 +1,12 @@
+.image-button {
+
+    > img {
+        width: 32px;
+        height: 32px;
+        object-fit: cover;
+    }
+
+    &:focus, &:active {
+        outline: none;
+    }
+}
