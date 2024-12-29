@@ -20,22 +20,31 @@ jobs:
           node-version: '22'  # Remplacez par la version Node.js souhaitée
 
       - name: "Install dependencies"
-
         run: |
           cd back && npm install && cd ..
           cd front && npm install
 
       - name: "Build the application"
+        if: success()
+        env:
+          VITE_HOST_API: ${{ secrets.VITE_HOST_API }}
         run: |
-          cd back && npm run build && cd ..
           cd front && npm run build
+          cd ..
+          cd back && npm run build
 
       - name: "Deploy the app"
         if: success()
-        uses: easingthemes/ssh-deploy@v2.1.4
+        uses: easingthemes/ssh-deploy@v5.1.0
         with:
           REMOTE_HOST: ${{ secrets.SSH_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.SSH_REMOTE_USER }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SOURCE: "./"
+          SOURCE: "."
           TARGET: "~/app"
+          ARGS: "-rltgoDzO --delete --verbose --exclude=.env"
+          SCRIPT_BEFORE: |
+            cd /var/www/html && tar -cvf ${{ secrets.BACKUP_DIR }} *
+          SCRIPT_AFTER: |
+            mv ~/app/front/dist /var/www/html
+            cd back && docker compose up -d

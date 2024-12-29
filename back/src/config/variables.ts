@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+
+dotenv.config({ path: '../../../.env' });
+
 enum CODE_STATUS {
     SUCCESS=200,
     REDIRECT=301,
@@ -32,8 +36,10 @@ const REGEX = {
 
 const DEFAULT = {
     AVATAR_PLACEHOLDER: '/assets/avatar_placeholder.png',
-    BCRYPT_SALT: parseInt(process.env.BCRYPT_SALT || '10'),
-    JWT_SECRET: process.env.JWT_SECRET || 'th15_iS_Th3_d3Faù1t_S3c4eT_!',
+    BCRYPT_SALT: parseInt(process.env.BCRYPT_SALT ?? '10'),
+    JWT_SECRET: process.env.JWT_SECRET ?? 'th15_iS_Th3_d3Faù1t_S3c4eT_!',
+    ENVIRONMENT: process.env.ENVIRONMENT ?? 'development',
+    UPLOAD_DIR: process.env.UPLOAD_DIR ?? '/tmp/'
 }
 
 enum SEQUELIZE_ERRORS {
