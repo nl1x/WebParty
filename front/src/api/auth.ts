@@ -5,7 +5,6 @@ import Endpoints from "@api/endpoints.ts";
 export async function login(username: string, password: string)
 {
     let response = null;
-
     try {
         response = await axios.post(
             Endpoints.auth.login,
@@ -28,5 +27,6 @@ export async function login(username: string, password: string)
             sameSite: 'strict'
         }
     );
+    console.log("cookies set");
     return true;
 }
