@@ -46,4 +46,4 @@ jobs:
           SCRIPT_AFTER: |
             chmod +x ~/app/front/dist 
             mv ~/app/front/dist /var/www/html
-            cd back && docker compose up -d
+            cd /app/back && sudo /usr/local/bin/manage-app.sh restart

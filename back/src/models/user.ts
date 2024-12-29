@@ -1,11 +1,18 @@
 import {DataTypes, Model, Sequelize} from 'sequelize';
-import {ACTION_STATUS, ROLE, VAR_LENGTH} from "@config/variables";
+import {
+    ACTION_STATUS,
+    CODE_STATUS,
+    DEFAULT,
+    ROLE,
+    VAR_LENGTH
+} from "@config/variables";
 import ROLES from "@config/roles";
 import Role from "@models/role";
 import Roles from "@config/roles";
 import UserAction from "@models/user-action";
 import Action from "@models/action";
 import {deleteFile} from "@utils/avatar";
+import hashPassword from "@utils/hash";
 
 class User extends Model {
     declare id: number;
@@ -180,6 +187,39 @@ export async function initUserModel(database: Sequelize) {
             sequelize: database, modelName: 'User'
         }
     );
+}
+
+export const createAdminUser = async () => {
+
+    const username = DEFAULT.ADMIN_USERNAME;
+    const password = DEFAULT.ADMIN_PASSWORD;
+
+    let hashedPassword: string;
+    try {
+        hashedPassword = await hashPassword(password);
+    } catch (error) {
+        console.error("An error occurred while hashing the admin password: ", error);
+        return;
+    }
+
+    const [user, created] = await User.findOrCreate(
+        {
+            where: { username: username },
+            defaults: {
+                username: username,
+                password: hashedPassword
+            },
+        }
+    );
+
+    if (created) {
+        user.roleName = Roles[ROLE.ADMIN].name;
+        try {
+            await user.save();
+        } catch (error) {
+            console.error("An error occurred while saving the administrator: ", error);
+        }
+    }
 }
 
 export default User;

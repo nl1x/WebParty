@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
-import User, { initUserModel } from "@models/user";
+import User, {createAdminUser, initUserModel} from "@models/user";
 import Role, { initRoleModel, initRoles } from "@models/role";
 import Action, { initActionModel, initActions } from "@models/action";
 import UserAction, { initUserActionModel } from "@models/user-action";
@@ -78,6 +78,7 @@ export async function initializeDatabase() {
     // Create roles
     await initRoles();
     await initActions();
+    await createAdminUser();
 
 }
 
