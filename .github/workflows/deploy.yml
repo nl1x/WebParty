@@ -29,7 +29,7 @@ jobs:
         env:
           VITE_HOST_API: ${{ secrets.VITE_HOST_API }}
         run: |
-          cd front && npm run build && cd ../back && npm run build
+          cd front && npm run build
 
       - name: "Deploy the app"
         if: success()
@@ -44,5 +44,6 @@ jobs:
           SCRIPT_BEFORE: |
             mkdir -p ${{ secrets.BACKUP_DIR }} && cd /var/www/html && tar -cvf ${{ secrets.BACKUP_DIR }}/backup.tar *
           SCRIPT_AFTER: |
+            chmod +x ~/app/front/dist 
             mv ~/app/front/dist /var/www/html
             cd back && docker compose up -d
