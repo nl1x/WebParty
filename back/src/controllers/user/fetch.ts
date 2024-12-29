@@ -14,7 +14,7 @@ export async function getUsers(req: Request, res: Response)
 
     try {
         users = await User.findAll({
-            attributes: { exclude: ['password'] },
+            attributes: ['username', 'avatarUrl', 'score'],
             include: [
                 {
                     model: Role,
@@ -33,15 +33,15 @@ export async function getUsers(req: Request, res: Response)
         ));
     }
 
-    let action = null;
+    // let action = null;
 
     // TODO: Partie du code à revoir
-    for (const user of users) {
-        action = await user.getCurrentAction();
-        user.dataValues.action = action;
-        delete user.dataValues.actionsId;
-        delete user.dataValues.currentActionIndex;
-    }
+    // for (const user of users) {
+    //     action = await user.getCurrentAction();
+    //     user.dataValues.action = action;
+    //     delete user.dataValues.actionsId;
+    //     delete user.dataValues.currentActionIndex;
+    // }
 
     res.status(CODE_STATUS.SUCCESS).json({
         "users": users
