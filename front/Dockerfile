@@ -1,44 +1,18 @@
-## Dockerfile
-################################
-## BUILD ENVIRONMENT ###########
-################################
+# Étape 1 : Construire les fichiers statiques
+FROM node:22 AS builder
 
-# Use the official Node.js Alpine image (adjust based on your project's requirements)
-# You can find the appropriate image on Docker Hub: https://hub.docker.com/_/node
-# In this example, we're using node:20-alpine3.20
-# run in termilnal commande line "node --version to get the version of your app"
-FROM node:20-alpine3.20 As build
-
-# Set the working directory inside the container
 WORKDIR /usr/src/app
-
-# Copy package.json and package-lock.json into the container
-COPY package*.json package-lock.json ./
-
-# Install dependencies using npm
-RUN npm ci
-
-# Copy the project files into the working directory
-COPY ./ ./
-
-# Build the React app for production
+COPY package*.json ./
+RUN npm install
+COPY . .
 RUN npm run build
 
-################################
-#### PRODUCTION ENVIRONMENT ####
-################################
+# Étape 2 : Servir avec NGINX
+FROM nginx:stable-alpine
+COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
 
-# Use the official NGINX image for production
-FROM nginx:stable-alpine as production
-
-# copy nginx configuration in side conf.d folder
-COPY --from=build /usr/src/app/nginx /etc/nginx/conf.d
-
-# Copy the build output from the dist folder into the Nginx html directory
-COPY --from=build /usr/src/app/dist /usr/share/nginx/html
-
-# Expose port 80 to allow access to the app
+# Exposer le port de NGINX
 EXPOSE 80
 
-# Run Nginx in the foreground
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+# Lancer NGINX
+CMD ["nginx", "-g", "daemon off;"]

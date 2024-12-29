@@ -1,0 +1,59 @@
+services:
+  backend:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - database
+    ports:
+      - "3000:3000"
+    networks:
+      - network
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - back/.env
+    command: ["npm", "run", "serve"]
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8080:80"
+    networks:
+      - network
+
+  database:
+    image: mysql:latest
+    container_name: mysql_database
+    restart: always
+    env_file:
+      - back/.env
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin_dashboard
+    restart: always
+    depends_on:
+      - database
+    env_file:
+      - .env
+    ports:
+      - "8081:80"
+    networks:
+      - network
+
+volumes:
+  db_data:
+
+networks:
+  network:
