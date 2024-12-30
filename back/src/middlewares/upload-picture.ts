@@ -5,8 +5,11 @@ import fs from "fs";
 async function createDirectoryIfNotExists(dir: string)
 {
     try {
+        console.log("searching folder: ", dir);
         await fs.promises.access(dir);
+        console.log("found !");
     } catch (error) {
+        console.log("not found, creating it: ", dir);
         await fs.promises.mkdir(dir, { recursive: true });
     }
 }
