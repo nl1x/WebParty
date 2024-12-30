@@ -116,7 +116,7 @@ export default function HomeView()
       </div>
       <Card className={"home-view__action-card " + (error ? 'home-view__action-card-error' : '')}>
         <div className="home-view__action-difficulty">
-        {hasAction &&
+        {(profile?.me?.action) &&
           Array(profile?.me.action?.action.difficulty).fill(0).map((_, index) => (
             <LocalFireDepartmentRoundedIcon fontSize="large" key={index} color={difficultyColor}/>
           ))
@@ -137,7 +137,7 @@ export default function HomeView()
           text={"Pas cap..."}
           icon={<SentimentVeryDissatisfiedRoundedIcon/>}
           loading={buttonLoading}
-          disabled={isPendingForApproval || !hasAction}
+          disabled={isPendingForApproval || !(profile?.me?.action)}
         />
         <Button
           className="home-view__validate-button"
@@ -150,7 +150,7 @@ export default function HomeView()
             : <SentimentVerySatisfiedRoundedIcon/>
           }
           loading={buttonLoading}
-          disabled={!hasAction}
+          disabled={!(profile?.me?.action)}
         />
       </div>
     </div>

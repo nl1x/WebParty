@@ -69,6 +69,7 @@ export function AuthProvider(props: AuthProviderProps) {
 
   useEffect(() => {
     if (profile) {
+      console.log('setting hasAction: ', profile.me.action !== null);
       setHasAction(profile.me.action !== null);
       setIsPendingForApproval(profile.me.action?.status === 'pending-approval');
     }
