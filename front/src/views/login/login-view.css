@@ -12,6 +12,10 @@
         margin-top: 10px;
     }
 
+    .login-button > input {
+        width: 100%;
+    }
+
     &.loading {
         opacity: 0.4;
     }
