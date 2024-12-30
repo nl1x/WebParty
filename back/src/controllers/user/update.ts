@@ -9,7 +9,7 @@ import hashPassword from "@utils/hash";
 export default async function updateUser(req: Request, res: Response)
 {
     const authReq = req as AuthenticatedRequest;
-    const { username, password } = authReq.body;
+    const { username, password, displayName } = authReq.body;
     const avatar = authReq.file;
 
     if (password) {
@@ -26,6 +26,9 @@ export default async function updateUser(req: Request, res: Response)
 
     if (username)
         authReq.user.username = username;
+
+    if (displayName)
+        authReq.user.displayName = displayName;
 
     if (avatar) {
         const avatarError = checkFileAsImage(avatar);

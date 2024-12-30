@@ -41,6 +41,7 @@ const DEFAULT = {
     ENVIRONMENT: process.env.ENVIRONMENT ?? 'development',
     UPLOAD_DIR: process.env.UPLOAD_DIR ?? '/tmp/',
     ADMIN_USERNAME: process.env.ADMIN_USERNAME ?? 'admin',
+    ADMIN_DISPLAY_NAME: process.env.ADMIN_USERNAME ?? 'admin',
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD ?? 'admin'
 }
 

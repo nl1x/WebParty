@@ -112,7 +112,7 @@ export default function HomeView()
       />
       <div className="home-view__title">
         <h1>Nouvel an 2025 🎉</h1>
-        <h4>{profile?.me?.username}</h4>
+        <h4>{profile?.me?.displayName ?? profile?.me?.username}</h4>
       </div>
       <Card className={"home-view__action-card " + (error ? 'home-view__action-card-error' : '')}>
         <div className="home-view__action-difficulty">

@@ -18,6 +18,7 @@ export interface ActionProps {
 
 export interface MinimalUserProps {
     username: string;
+    displayName: string;
     avatarUrl: string;
     role: RoleProps;
     score: number;
@@ -38,6 +39,7 @@ export interface UserProfileProps {
     me: {
         id: number;
         username: string;
+        displayName: string;
         avatarUrl: string;
         createdAt: string;
         updatedAt: string;

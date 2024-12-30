@@ -31,6 +31,7 @@ function checkUsername(username: string) : CustomError|null
 export default async function registerUser(req: Request, res: Response)
 {
     const username = req.body['username'];
+    const displayName = req.body['displayName'];
     const password = req.body['password'];
     const avatar = req.file;
 
@@ -73,7 +74,8 @@ export default async function registerUser(req: Request, res: Response)
     try {
         user = await User.create({
             username,
-            password: hashedPassword
+            password: hashedPassword,
+            displayName: displayName ?? ''
         });
     } catch (error) {
         // Delete temporary avatar file

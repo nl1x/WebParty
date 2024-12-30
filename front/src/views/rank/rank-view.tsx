@@ -76,7 +76,7 @@ export default function RankView()
                       src={user.avatarUrl}
                       alt=""
                     />
-                    <p className="rank-view__username">{user.username}</p>
+                    <p className="rank-view__username">{user.displayName ?? user.username}</p>
                     {user.role.weight > 0 &&
                       <p className="rank-view__user-as-organiser">Orga</p>
                     }

@@ -15,7 +15,7 @@ services:
     environment:
       - NODE_ENV=production
     env_file:
-      - back/.env
+      - .env
     command: ["npm", "run", "serve"]
 
   frontend:
@@ -35,7 +35,7 @@ services:
     container_name: mysql_database
     restart: always
     env_file:
-      - back/.env
+      - .env
     ports:
       - "3306:3306"
     volumes:
