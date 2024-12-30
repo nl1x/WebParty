@@ -1,6 +1,5 @@
 import axios from "@api/axios.ts";
 import Endpoints from "@api/endpoints.ts";
-import Cookies from "js-cookie";
 
 export default async function getMe() {
     let session = localStorage.getItem('session');
@@ -23,7 +22,7 @@ export default async function getMe() {
 }
 
 export async function getAllUsers() {
-    let session = Cookies.get('session');
+    let session = localStorage.getItem('session');
     let response = null;
 
     try {
@@ -43,7 +42,7 @@ export async function getAllUsers() {
 }
 
 export async function saveUserProfile(password: string, image: File|null|undefined) {
-    let session = Cookies.get('session');
+    let session = localStorage.getItem('session');
     let response = null;
     const formData = new FormData();
 

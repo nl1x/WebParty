@@ -1,5 +1,5 @@
 # Étape 1 : Construire les fichiers statiques
-FROM node:22 AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /usr/src/app
 COPY package*.json ./
