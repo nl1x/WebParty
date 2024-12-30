@@ -3,7 +3,7 @@ import Endpoints from "@api/endpoints.ts";
 import Cookies from "js-cookie";
 
 export default async function getMe() {
-    let session = Cookies.get('session');
+    let session = localStorage.getItem('session');
     let response = null;
 
     try {
