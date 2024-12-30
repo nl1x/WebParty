@@ -61,6 +61,16 @@
                     background-color: rgba(255, 255, 255, 0.2);
                     padding-bottom: 5px;
 
+                    &.not-done {
+                        background-color: rgba(255, 0, 0, 0.2);
+                        border-color: rgba(255, 0, 0, 1);
+                    }
+
+                    &.done {
+                        background-color: rgba(64, 255, 0, 0.2);
+                        border-color: rgba(64, 255, 0, 1);
+                    }
+
                     .history-view__action-difficulty {
                         position: absolute;
                         top: 5px;
