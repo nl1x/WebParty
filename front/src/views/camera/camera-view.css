@@ -9,7 +9,7 @@
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: end;
     align-items: center;
 
     .camera-view__navigation {
@@ -34,8 +34,9 @@
     }
 
     .camera-view__card {
+
         width: fit-content;
-        height: fit-content;
+        height: 70%;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -84,6 +85,6 @@
             }
 
         }
-
     }
+
 }
