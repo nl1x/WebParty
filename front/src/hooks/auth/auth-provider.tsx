@@ -31,7 +31,7 @@ export function AuthProvider(props: AuthProviderProps) {
   const {navigate} = useNavigatorContext();
 
   const isLoggedIn = useCallback(() => {
-    const session = localStorage.get('session');
+    const session = localStorage.getItem('session');
 
     return !(!session);
   }, []);
