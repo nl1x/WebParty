@@ -1,4 +1,3 @@
-import Cookies from "js-cookie";
 import axios from "@api/axios.ts";
 import Endpoints from "@api/endpoints.ts";
 
@@ -23,7 +22,7 @@ function dataImageToFile(dataurl: string, filename: string): File|null {
 
 export async function validateCurrentAction(isDone: boolean, picture?: string|null)
 {
-    let session = Cookies.get('session');
+    let session = localStorage.getItem('session');
     let response = null;
     const formData = new FormData();
 
@@ -56,7 +55,7 @@ export async function validateCurrentAction(isDone: boolean, picture?: string|nu
 
 export async function getPendingForApprovalActions()
 {
-    let session = Cookies.get('session');
+    let session = localStorage.getItem('session');
     let response = null;
 
 
@@ -78,7 +77,7 @@ export async function getPendingForApprovalActions()
 
 export async function approveAction(id: number, isApproved: boolean)
 {
-    let session = Cookies.get('session');
+    let session = localStorage.getItem('session');
     let response = null;
     const data = {
         isApproved: isApproved
