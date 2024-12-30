@@ -21,7 +21,7 @@ export function file(fieldName: string, destination: string) {
                     : destination;
 
                 await createDirectoryIfNotExists(finalDestination);
-                cb(null, finalDestination);
+                cb(null, destination);
             },
             filename: async function (req, file, cb) {
                 cb(null, `temp_${Date.now()}_${file.originalname}`);
