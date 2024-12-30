@@ -24,12 +24,11 @@ import Navigation, {
 export default function HomeView()
 {
   const [loading, setLoading] = useState<boolean>(true);
+  const [buttonLoading, setButtonLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const [difficultyColor, setDifficultyColor] = useState<'success'|'warning'|'error'>('success');
   const { navigate } = useNavigatorContext();
   const { profile, isPendingForApproval, hasAction, updateUserProfile } = useAuthContext();
-
-  console.log("In home view");
 
   useEffect(() => {
     if (profile) {
@@ -57,7 +56,8 @@ export default function HomeView()
       return;
     }
 
-    const isValidated = validateCurrentAction(true);
+    setButtonLoading(true);
+    const isValidated = await validateCurrentAction(true);
 
     if (!isValidated) {
       setError(true);
@@ -66,18 +66,24 @@ export default function HomeView()
     }
 
     await updateUserProfile();
+    setButtonLoading(false);
   }
 
   const handleNotAbleButton = async () => {
+    setButtonLoading(true);
+    console.log("validating action");
     const isValidated = await validateCurrentAction(false);
 
     if (!isValidated) {
       setError(true);
+      setButtonLoading(false);
       setTimeout(() => setError(false), 3000);
       return;
     }
 
+    console.log("updating profile");
     await updateUserProfile();
+    setButtonLoading(false);
   }
 
   const navigationIconButtons: NavigationIconButtonsProps[] = [
@@ -130,6 +136,7 @@ export default function HomeView()
           onClick={handleNotAbleButton}
           text={"Pas cap..."}
           icon={<SentimentVeryDissatisfiedRoundedIcon/>}
+          loading={buttonLoading}
           disabled={isPendingForApproval || !hasAction}
         />
         <Button
@@ -142,6 +149,7 @@ export default function HomeView()
               || <CameraAltRoundedIcon/>)
             : <SentimentVerySatisfiedRoundedIcon/>
           }
+          loading={buttonLoading}
           disabled={!hasAction}
         />
       </div>

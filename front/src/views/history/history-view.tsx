@@ -64,7 +64,7 @@ export default function HistoryView()
                 id={action.id.toString()}
                 className="history-view__action"
               >
-                <Card className="history-view__action-card">
+                <Card className={`history-view__action-card ${action.status}`}>
                   <div className="history-view__action-difficulty">
                     {Array(action?.action.difficulty).fill(0).map((_, index) => (
                       <LocalFireDepartmentRoundedIcon
