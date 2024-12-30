@@ -96,54 +96,53 @@ export default function CameraView()
       <Card className="camera-view__card">
         {(picture || (isPendingForApproval && !retakePicture))
         && <img
-             src={picture ?? proofPictureUrl}
-             alt="captured"
-             style={{width: '100%'}}
-           />
+           src={picture ?? proofPictureUrl}
+           alt="captured"
+           style={{width: '100%'}}
+         />
         || <Webcam
-             ref={cameraRef}
-             forceScreenshotSourceSize
-             videoConstraints={{width: 1080, facingMode}}
-             width='100%'
-             mirrored={mirrored}
-           />
-          }
-        </Card>
-        <div
-          className={"camera-view__controller" + (picture || (isPendingForApproval && !retakePicture) ? ' camera-view__validation' : '')}>
-          {
-            (picture || (isPendingForApproval && !retakePicture))
-            && (<>
-              <Button
-                className="camera-view__retake-button"
-                text="Reprendre"
-                onClick={handleRetakePicture}
-                variant="secondary"
-              />
-              <Button
-                className="camera-view__send-button"
-                text="Envoyer"
-                icon={<SendRoundedIcon/>}
-                iconPosition="right"
-                onClick={handleSendPicture}
-                disabled={(!picture) || (isPendingForApproval && !retakePicture)}
-                loading={loading}
-              />
-            </>) || (<>
-              <IconButton
-                className='camera-view__flip-button'
-                icon={<FlipCameraAndroidRoundedIcon style={{color: 'black'}}/>}
-                onClick={handleFlipCamera}
-              />
-              <IconButton
-                className='camera-view__capture-button'
-                icon={<CameraAltRoundedIcon style={{color: 'black'}}/>}
-                onClick={handleTakePicture}
-              />
-            </>)
-          }
-
-        </div>
+           ref={cameraRef}
+           forceScreenshotSourceSize
+           videoConstraints={{width: 1600, facingMode, frameRate: 60 }}
+           width='100%'
+           mirrored={mirrored}
+         />
+        }
+      </Card>
+      <div
+        className={"camera-view__controller" + (picture || (isPendingForApproval && !retakePicture) ? ' camera-view__validation' : '')}>
+        {
+          (picture || (isPendingForApproval && !retakePicture))
+          && (<>
+            <Button
+              className="camera-view__retake-button"
+              text="Reprendre"
+              onClick={handleRetakePicture}
+              variant="secondary"
+            />
+            <Button
+              className="camera-view__send-button"
+              text="Envoyer"
+              icon={<SendRoundedIcon/>}
+              iconPosition="right"
+              onClick={handleSendPicture}
+              disabled={(!picture) || (isPendingForApproval && !retakePicture)}
+              loading={loading}
+            />
+          </>) || (<>
+            <IconButton
+              className='camera-view__flip-button'
+              icon={<FlipCameraAndroidRoundedIcon style={{color: 'black'}}/>}
+              onClick={handleFlipCamera}
+            />
+            <IconButton
+              className='camera-view__capture-button'
+              icon={<CameraAltRoundedIcon style={{color: 'black'}}/>}
+              onClick={handleTakePicture}
+            />
+          </>)
+        }
+      </div>
     </div>
   )
 }
