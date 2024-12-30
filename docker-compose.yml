@@ -10,6 +10,8 @@ services:
       - "3000:3000"
     networks:
       - network
+    volumes:
+      - uploads_data:/usr/src/app/uploads # Montez le dossier `/uploads` dans le conteneur
     environment:
       - NODE_ENV=production
     env_file:
@@ -54,6 +56,12 @@ services:
 
 volumes:
   db_data:
+  uploads_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/www/uploads # Monté vers votre serveur
 
 networks:
   network:
