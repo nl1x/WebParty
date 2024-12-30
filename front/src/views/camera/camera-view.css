@@ -71,6 +71,10 @@
             }
         }
 
+        .camera-view__send-button, .camera-view__retake-button {
+            margin-bottom: 30px;
+        }
+
         .camera-view__capture-button, .camera-view__flip-button {
             display: flex;
             align-items: center;
