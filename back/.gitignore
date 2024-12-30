@@ -5,6 +5,7 @@ node_modules/
 .env
 
 uploads/actions/*
+!uploads/actions/.gitkeep
 
 uploads/avatars/*
 !uploads/avatars/placeholder.png
