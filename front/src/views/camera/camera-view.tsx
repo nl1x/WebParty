@@ -15,6 +15,10 @@ import {validateCurrentAction} from "@api/action.ts";
 import useAuthContext from "@hooks/auth/auth-provider.tsx";
 import BubbleLoader from "@components/loader/bubble-loader.tsx";
 
+interface CameraFacingModeProps {
+  exact?: "environment";
+}
+
 export default function CameraView()
 {
   const { navigate } = useNavigatorContext();
@@ -24,6 +28,8 @@ export default function CameraView()
   const [loading, setLoading] = useState<boolean>(true);
   const cameraRef = useRef<Webcam>(null);
   const { profile, updateUserProfile, isPendingForApproval } = useAuthContext();
+  const [facingMode, setFacingMode] = useState<CameraFacingModeProps|'user'>('user');
+  const [mirrored, setMirrored] = useState<boolean>(true);
 
   useEffect(() => {
     if (profile) {
@@ -34,7 +40,13 @@ export default function CameraView()
   }, [profile])
 
   const handleFlipCamera = () => {
-    console.log("flip camera");
+    if (facingMode === 'user') {
+      setFacingMode({exact: "environment"});
+      setMirrored(false);
+    } else {
+      setFacingMode('user');
+      setMirrored(true);
+    }
   }
 
   const handleTakePicture = () => {
@@ -91,9 +103,9 @@ export default function CameraView()
         || <Webcam
              ref={cameraRef}
              forceScreenshotSourceSize
-             videoConstraints={{width: 1080}}
+             videoConstraints={{width: 1080, facingMode}}
              width='100%'
-             mirrored={true}
+             mirrored={mirrored}
            />
           }
         </Card>
