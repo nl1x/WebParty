@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useState} from 'react';
 import { useMemo } from 'react';
 import { createContext } from 'react';
 import { useContext } from 'react';
-import Cookies from "js-cookie";
 import getMe from "@api/user.ts";
 import useNavigatorContext from "@hooks/navigator/navigator-provider.tsx";
 import {PATH} from "@path/path.tsx";
@@ -32,7 +31,7 @@ export function AuthProvider(props: AuthProviderProps) {
   const {navigate} = useNavigatorContext();
 
   const isLoggedIn = useCallback(() => {
-    const session = Cookies.get('session');
+    const session = localStorage.get('session');
 
     return !(!session);
   }, []);
