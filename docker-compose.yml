@@ -27,6 +27,8 @@ services:
       - "8080:80"
     networks:
       - network
+    volumes:
+      - ./front/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
 
   database:
     image: mysql:latest
