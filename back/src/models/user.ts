@@ -1,7 +1,6 @@
 import {DataTypes, Model, Sequelize} from 'sequelize';
 import {
     ACTION_STATUS,
-    CODE_STATUS,
     DEFAULT,
     ROLE,
     VAR_LENGTH
@@ -18,6 +17,7 @@ class User extends Model {
     declare id: number;
     declare password: string;
     declare username: string;
+    declare displayName: string;
     declare avatarUrl: string;
     declare roleName: string;
     declare score: number;
@@ -151,6 +151,11 @@ export async function initUserModel(database: Sequelize) {
                 type: DataTypes.STRING(VAR_LENGTH.USERNAME),
                 unique: true
             },
+            displayName: {
+                type: DataTypes.STRING(VAR_LENGTH.USERNAME),
+                allowNull: false,
+                defaultValue: ''
+            },
             password: {
                 type: DataTypes.STRING(VAR_LENGTH.PASSWORD)
             },
@@ -192,6 +197,7 @@ export async function initUserModel(database: Sequelize) {
 export const createAdminUser = async () => {
 
     const username = DEFAULT.ADMIN_USERNAME;
+    const displayName = DEFAULT.ADMIN_DISPLAY_NAME;
     const password = DEFAULT.ADMIN_PASSWORD;
 
     let hashedPassword: string;
@@ -207,6 +213,7 @@ export const createAdminUser = async () => {
             where: { username: username },
             defaults: {
                 username: username,
+                displayName: displayName,
                 password: hashedPassword
             },
         }

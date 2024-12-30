@@ -14,7 +14,7 @@ export async function getUsers(req: Request, res: Response)
 
     try {
         users = await User.findAll({
-            attributes: ['username', 'avatarUrl', 'score'],
+            attributes: ['username', 'avatarUrl', 'score', 'displayName'],
             include: [
                 {
                     model: Role,
