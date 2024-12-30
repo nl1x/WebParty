@@ -108,9 +108,9 @@ export async function validateAction(req: Request, res: Response)
         return changeToPendingForApproval(currentAction, proofPicture, res)
     } else {
         currentAction.status = ACTION_STATUS.DONE;
+        authReq.user.score += currentAction.action ? currentAction.action.difficulty : 0;
     }
 
-    authReq.user.score += currentAction.action ? currentAction.action.difficulty : 0;
     authReq.user.currentActionIndex++;
 
     try {
