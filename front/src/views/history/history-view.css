@@ -39,11 +39,12 @@
         .history-view__actions-list {
 
             max-height: 80svh;
-            overflow: scroll;
+            overflow: auto;
             padding-top: 12%;
+            padding-bottom: 12%;
 
-            mask-image: linear-gradient(to bottom, transparent, black 10%, black 100%, transparent);
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 100%, transparent);
+            mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
 
             -ms-overflow-style: none;  /* Internet Explorer 10+ */
             scrollbar-width: none;  /* Firefox */

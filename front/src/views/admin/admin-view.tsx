@@ -94,7 +94,7 @@ export default function AdminView()
                     <div className="admin-view__action-header">
                       <div className="admin-view__action-author-profile">
                         <img className="admin-view__action-author-picture" src={action.user.avatarUrl} alt="author image"/>
-                        <p>{action.user.username}</p>
+                        <p>{action.user.displayName ?? action.user.username}</p>
                       </div>
                       <div className="admin-view__action-description">
                         <p>{action.action.description}</p>
