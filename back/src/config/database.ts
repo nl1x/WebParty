@@ -77,7 +77,7 @@ export async function initializeDatabase() {
 
     // Create roles
     await initRoles();
-    await initActions();
+    // await initActions();
     await createAdminUser();
 
 }
