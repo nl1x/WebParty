@@ -9,6 +9,7 @@ import {CODE_STATUS} from "@config/variables";
 export default async function assignActions(req: Request, res: Response)
 {
     const users = await User.findAll();
+    console.log(users);
 
     const easyActions = await Action.findAll({
         where: {
@@ -68,7 +69,7 @@ export default async function assignActions(req: Request, res: Response)
 
             actions = shuffle(actions);
 
-            for (let j = 0; j < setting.amountPerUser && j < actions.length; j++) {
+            for (let j = 0; j < setting.amountPerUser && setting.currentIndex < actions.length; j++) {
 
                 if (j >= actions.length)
                     j = 0;
