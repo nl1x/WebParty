@@ -7,7 +7,7 @@ import {CODE_STATUS} from "@config/variables";
 
 export default async function createAction(req: Request, res: Response)
 {
-    const { difficulty, requireProof, description } = req.body;
+    const { difficulty, requireProof, description, excludedUsersIdList } = req.body;
     const parsedDifficulty = parseInt(difficulty, 10);
 
     if (parsedDifficulty < 1 || parsedDifficulty > 3) {
@@ -25,12 +25,14 @@ export default async function createAction(req: Request, res: Response)
     }
 
     let action = null;
+    let excludedUsersId = excludedUsersIdList ? excludedUsersIdList.join(",") : "";
 
     try {
         action = await Action.create({
             description,
             difficulty: parsedDifficulty,
-            requireProof: requireProof
+            requireProof: requireProof,
+            excludedUsersId: excludedUsersId
         });
     } catch (error) {
         return handleRequestError(res, error);

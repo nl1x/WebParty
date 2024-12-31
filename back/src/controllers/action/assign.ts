@@ -5,7 +5,6 @@ import shuffle from "@utils/shuffle";
 import UserAction from "@models/user-action";
 import handleRequestError from "@errors/sequelize";
 import {CODE_STATUS} from "@config/variables";
-import CustomError from "@errors/custom-error";
 
 export default async function assignActions(req: Request, res: Response)
 {
@@ -61,18 +60,24 @@ export default async function assignActions(req: Request, res: Response)
             if (setting.actions.length === 0)
                 continue;
 
-            setting.actions = shuffle(setting.actions);
+            let actions = setting.actions.filter((action) => {
+                const excludedUsers = action.excludedUsersId.split(",");
 
-            for (let j = 0; j < setting.amountPerUser && j < setting.actions.length; j++) {
+                return !excludedUsers.includes(user.id.toString());
+            });
 
-                if (j >= setting.actions.length)
+            actions = shuffle(actions);
+
+            for (let j = 0; j < setting.amountPerUser && j < actions.length; j++) {
+
+                if (j >= actions.length)
                     j = 0;
 
                 try {
                     userAction = await UserAction.create({
                         userId: user.id,
-                        actionId: setting.actions[setting.currentIndex].id,
-                        requireProof: setting.actions[setting.currentIndex].requireProof,
+                        actionId: actions[setting.currentIndex].id,
+                        requireProof: actions[setting.currentIndex].requireProof,
                         nextUserActionId: null
                     });
                     actionsId.push(userAction.id);

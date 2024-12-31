@@ -6,6 +6,7 @@ class Action extends Model {
     declare description: string;
     declare difficulty: number;
     declare requireProof: boolean;
+    declare excludedUsersId: string;
 }
 
 export async function initActionModel(database: Sequelize) {
@@ -27,6 +28,11 @@ export async function initActionModel(database: Sequelize) {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false
             },
+            excludedUsersId: {
+                type: DataTypes.STRING,
+                defaultValue: "",
+                allowNull: false
+            },
         },
         {
             sequelize: database,
@@ -38,7 +44,7 @@ export async function initActionModel(database: Sequelize) {
 
 export async function initActions()
 {
-    for (let i = 0; i < 72; i++) {
+    for (let i = 0; i < 2; i++) {
         await Action.findOrCreate({
             where: {
                 description: `EASY_${i}`,
@@ -46,7 +52,7 @@ export async function initActions()
             }
         });
     }
-    for (let i = 0; i < 46; i++) {
+    for (let i = 0; i < 0; i++) {
         await Action.findOrCreate({
             where: {
                 description: `MEDIUM_${i}`,
@@ -54,7 +60,7 @@ export async function initActions()
             }
         });
     }
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 2; i++) {
         await Action.findOrCreate({
             where: {
                 description: `HARD_${i}`,
