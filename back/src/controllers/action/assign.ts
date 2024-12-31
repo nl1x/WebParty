@@ -9,7 +9,6 @@ import {CODE_STATUS} from "@config/variables";
 export default async function assignActions(req: Request, res: Response)
 {
     const users = await User.findAll();
-    console.log(users);
 
     const easyActions = await Action.findAll({
         where: {
@@ -69,10 +68,12 @@ export default async function assignActions(req: Request, res: Response)
 
             actions = shuffle(actions);
 
-            for (let j = 0; j < setting.amountPerUser && setting.currentIndex < actions.length; j++) {
+            let j = 0;
 
-                if (j >= actions.length)
-                    j = 0;
+            while (j < setting.amountPerUser && setting.currentIndex <= actions.length) {
+
+                if (setting.currentIndex >= actions.length)
+                    setting.currentIndex = 0;
 
                 try {
                     userAction = await UserAction.create({
@@ -86,6 +87,7 @@ export default async function assignActions(req: Request, res: Response)
                 } catch (error) {
                     return handleRequestError(res, error);
                 }
+                j++;
             }
         }
 
